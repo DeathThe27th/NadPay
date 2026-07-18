@@ -32,7 +32,8 @@ Checks-effects-interactions ordering, reentrancy guard, exact-funding enforcemen
 
 ```
 contracts/   Foundry project — NadPay.sol + tests
-web/         Next.js (App Router) + wagmi v3 + viem frontend
+app/, lib/, components/
+             Next.js (App Router) + wagmi v3 + viem frontend (repo root)
 ```
 
 ## Run it
@@ -42,8 +43,7 @@ web/         Next.js (App Router) + wagmi v3 + viem frontend
 cd contracts
 forge test
 
-# frontend (Monad testnet, contract address is baked into web/lib/nadpay.ts)
-cd web
+# frontend (Monad testnet, contract address is baked into lib/nadpay.ts)
 npm install
 npm run dev
 ```
