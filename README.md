@@ -54,7 +54,7 @@ Open http://localhost:3000, connect an injected wallet (MetaMask etc.) on Monad 
 
 The claim page has an optional "receive as USDC" layer (BUILD-2-SWAP.md): claim MON from NadPay, then swap MON→USDC via Uniswap in a second, explicitly-confirmed transaction — quote preview, price impact, slippage guard, min-received, quote expiry, and simulation before send. The gate logic is pure and unit-tested (`lib/swap.test.ts`, 12 tests).
 
-**The toggle is currently hidden** because Monad testnet was reset from genesis on 2025-12-16 and Uniswap has not redeployed there (their official docs list Monad mainnet only). Verified on-chain (chain 10143):
+**Swaps are currently disabled** because Monad testnet was reset from genesis on 2025-12-16 and Uniswap has not redeployed there (their official docs list Monad mainnet only). Verified on-chain (chain 10143):
 
 | Contract | Address | Status |
 |---|---|---|
