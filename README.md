@@ -62,7 +62,7 @@ The claim page has an optional "receive as USDC" layer (BUILD-2-SWAP.md): claim 
 | WMON (docs.monad.xyz) | `0xFb8bf4c1CC7a94c73D209a149eA2AbEa852BC541` | ✓ live, verified |
 | Uniswap V2/V3 (pre-reset addresses) | — | ✗ no code on live chain |
 
-Per the spec's locked rule ("never invent a token address or pool"), we ship without the toggle. Filling `SWAP_CONFIG` in `lib/swap.ts` with a verified router/quoter/pool enables the full flow — roadmap item for when Uniswap returns to testnet.
+Per the spec's locked rule ("never invent a token address or pool"), the USDC option renders visibly disabled ("Receive USDC · soon") on the claim page. Filling `SWAP_CONFIG` in `lib/swap.ts` with a verified router/quoter/pool enables the full flow — roadmap item for when Uniswap returns to testnet.
 
 ## Built with
 

@@ -154,22 +154,34 @@ export default function ClaimPage({
           {deadlineLabel(deadline)}
         </p>
         <div className="ticket-tear mt-6 pt-6 space-y-3">
-          {SWAP_CONFIG && (
-            <div className="flex justify-center gap-1 rounded-xl border border-border bg-background p-1 text-sm font-medium">
-              {(["MON", "USDC"] as const).map((token) => (
+          <div className="flex justify-center gap-1 rounded-xl border border-border bg-background p-1 text-sm font-medium">
+            {(["MON", "USDC"] as const).map((token) => {
+              const unavailable = token === "USDC" && !SWAP_CONFIG;
+              return (
                 <button
                   key={token}
-                  onClick={() => setReceiveAs(token)}
+                  onClick={() => !unavailable && setReceiveAs(token)}
+                  disabled={unavailable}
                   className={`flex-1 rounded-lg py-1.5 transition-colors ${
                     receiveAs === token
                       ? "bg-primary text-white"
-                      : "text-muted hover:text-foreground"
+                      : unavailable
+                        ? "text-muted/50 cursor-not-allowed"
+                        : "text-muted hover:text-foreground"
                   }`}
                 >
                   Receive {token}
+                  {unavailable && " · soon"}
                 </button>
-              ))}
-            </div>
+              );
+            })}
+          </div>
+          {!SWAP_CONFIG && (
+            <p className="text-xs text-muted">
+              USDC payouts (one extra swap via Uniswap) are paused — Uniswap
+              hasn&apos;t redeployed since the Monad testnet reset. You&apos;ll
+              receive MON.
+            </p>
           )}
           <button
             onClick={doClaim}
