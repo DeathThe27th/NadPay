@@ -3,13 +3,12 @@
 import Link from "next/link";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { shortAddress } from "@/lib/format";
+import { LogoMark } from "@/components/logo";
 
 export function Logo() {
   return (
     <Link href="/" className="flex items-center gap-2 font-semibold text-lg">
-      <span className="grid size-7 place-items-center rounded-lg bg-primary text-white text-sm font-bold">
-        N
-      </span>
+      <LogoMark className="size-7" />
       NadPay
     </Link>
   );
@@ -65,9 +64,7 @@ export function ConnectGate({ headline }: { headline: string }) {
   const { connect, connectors, isPending } = useConnect();
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-6 text-center rise-in">
-      <span className="grid size-14 place-items-center rounded-2xl bg-primary text-white text-2xl font-bold">
-        N
-      </span>
+      <LogoMark className="size-14" />
       <div className="space-y-2">
         <h1 className="text-2xl font-semibold sm:text-3xl">{headline}</h1>
         <p className="mx-auto max-w-sm text-muted">

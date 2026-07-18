@@ -50,6 +50,20 @@ npm run dev
 
 Open http://localhost:3000, connect an injected wallet (MetaMask etc.) on Monad testnet, add teammates, and hit **Create payout**. Share the generated `/claim/{roundId}` link; track claims and reclaim leftovers at `/round/{roundId}`.
 
+## Claim as USDC (swap layer) — built, gated off
+
+The claim page has an optional "receive as USDC" layer (BUILD-2-SWAP.md): claim MON from NadPay, then swap MON→USDC via Uniswap in a second, explicitly-confirmed transaction — quote preview, price impact, slippage guard, min-received, quote expiry, and simulation before send. The gate logic is pure and unit-tested (`lib/swap.test.ts`, 12 tests).
+
+**The toggle is currently hidden** because Monad testnet was reset from genesis on 2025-12-16 and Uniswap has not redeployed there (their official docs list Monad mainnet only). Verified on-chain (chain 10143):
+
+| Contract | Address | Status |
+|---|---|---|
+| USDC (Circle, official) | `0x534b2f3A21130d7a60830c2Df862319e593943A3` | ✓ live, verified |
+| WMON (docs.monad.xyz) | `0xFb8bf4c1CC7a94c73D209a149eA2AbEa852BC541` | ✓ live, verified |
+| Uniswap V2/V3 (pre-reset addresses) | — | ✗ no code on live chain |
+
+Per the spec's locked rule ("never invent a token address or pool"), we ship without the toggle. Filling `SWAP_CONFIG` in `lib/swap.ts` with a verified router/quoter/pool enables the full flow — roadmap item for when Uniswap returns to testnet.
+
 ## Built with
 
 - [Monskills](https://github.com/therealharpaljadeja/monskills) for Monad deployment/verification workflow

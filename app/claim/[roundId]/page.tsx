@@ -6,6 +6,8 @@ import { NADPAY_ABI, NADPAY_ADDRESS } from "@/lib/nadpay";
 import { monadTestnet } from "@/lib/wagmi";
 import { deadlineLabel, formatMon, shortAddress } from "@/lib/format";
 import { ConnectGate, Shell } from "@/components/shell";
+import { SwapPanel } from "@/components/swap-panel";
+import { SWAP_CONFIG } from "@/lib/swap";
 
 export default function ClaimPage({
   params,
@@ -21,6 +23,7 @@ export default function ClaimPage({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [justClaimed, setJustClaimed] = useState(false);
+  const [receiveAs, setReceiveAs] = useState<"MON" | "USDC">("MON");
 
   const { data: round, refetch: refetchRound } = useReadContract({
     address: NADPAY_ADDRESS,
@@ -101,11 +104,27 @@ export default function ClaimPage({
     );
   } else if (claimed) {
     body = (
-      <StatusCard tone="success" title={justClaimed ? "Paid ✓" : "Already claimed"}>
-        {justClaimed
-          ? `${formatMon(allocation ?? 0n)} MON just landed in your wallet.`
-          : "This wallet has already claimed its share of this payout."}
-      </StatusCard>
+      <>
+        <StatusCard tone="success" title={justClaimed ? "Paid ✓" : "Already claimed"}>
+          {justClaimed
+            ? `${formatMon(allocation ?? 0n)} MON just landed in your wallet.`
+            : "This wallet has already claimed its share of this payout."}
+        </StatusCard>
+        {justClaimed &&
+          receiveAs === "USDC" &&
+          SWAP_CONFIG &&
+          address &&
+          allocation != null &&
+          allocation > 0n && (
+            <div className="mt-4">
+              <SwapPanel
+                config={SWAP_CONFIG}
+                amountWei={allocation}
+                recipient={address}
+              />
+            </div>
+          )}
+      </>
     );
   } else if (!live) {
     body = (
@@ -134,14 +153,42 @@ export default function ClaimPage({
           from <span className="font-mono">{shortAddress(payer)}</span> ·{" "}
           {deadlineLabel(deadline)}
         </p>
-        <div className="ticket-tear mt-6 pt-6">
+        <div className="ticket-tear mt-6 pt-6 space-y-3">
+          {SWAP_CONFIG && (
+            <div className="flex justify-center gap-1 rounded-xl border border-border bg-background p-1 text-sm font-medium">
+              {(["MON", "USDC"] as const).map((token) => (
+                <button
+                  key={token}
+                  onClick={() => setReceiveAs(token)}
+                  className={`flex-1 rounded-lg py-1.5 transition-colors ${
+                    receiveAs === token
+                      ? "bg-primary text-white"
+                      : "text-muted hover:text-foreground"
+                  }`}
+                >
+                  Receive {token}
+                </button>
+              ))}
+            </div>
+          )}
           <button
             onClick={doClaim}
             disabled={busy}
             className="w-full rounded-xl bg-primary py-3 text-base font-semibold text-white hover:bg-primary-strong transition-colors disabled:opacity-60"
           >
-            {busy ? "Claiming…" : "Claim my MON"}
+            {busy
+              ? "Claiming…"
+              : receiveAs === "USDC"
+                ? "Claim MON, then swap"
+                : "Claim my MON"}
           </button>
+          {receiveAs === "USDC" && (
+            <p className="text-xs text-muted">
+              Two steps: claim your MON first, then confirm a separate
+              MON→USDC swap on Uniswap. Not atomic — you can stop after step
+              one and keep MON.
+            </p>
+          )}
           {error && <p className="mt-2 text-sm text-danger">{error}</p>}
         </div>
       </div>

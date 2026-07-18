@@ -12,7 +12,8 @@ import {
 import { NADPAY_ABI, NADPAY_ADDRESS } from "@/lib/nadpay";
 import { monadTestnet } from "@/lib/wagmi";
 import { formatMon, shortAddress } from "@/lib/format";
-import { ConnectGate, Shell } from "@/components/shell";
+import { Shell } from "@/components/shell";
+import { Landing } from "@/components/landing";
 
 type Row = { address: string; amount: string };
 
@@ -187,7 +188,7 @@ export default function Dashboard() {
   if (!isConnected) {
     return (
       <Shell>
-        <ConnectGate headline="Payroll in one link." />
+        <Landing />
       </Shell>
     );
   }
