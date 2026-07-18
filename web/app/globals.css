@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+/* NadPay — "payday on Monad": confident purple on pure white, pay-stub clarity. */
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.21 0.03 288);
+  --muted: oklch(0.45 0.03 288);
+  --surface: oklch(0.972 0.008 292);
+  --border: oklch(0.906 0.014 292);
+  --primary: oklch(0.54 0.21 288);
+  --primary-strong: oklch(0.46 0.2 288);
+  --primary-soft: oklch(0.945 0.03 292);
+  --success: oklch(0.55 0.14 158);
+  --success-soft: oklch(0.955 0.035 158);
+  --danger: oklch(0.55 0.19 25);
+  --danger-soft: oklch(0.955 0.025 25);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-strong: var(--primary-strong);
+  --color-primary-soft: var(--primary-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Pay-stub ticket: dashed tear line with punched notches. */
+.ticket {
+  position: relative;
+}
+.ticket-tear {
+  position: relative;
+  border-top: 2px dashed var(--border);
+}
+.ticket-tear::before,
+.ticket-tear::after {
+  content: "";
+  position: absolute;
+  top: -0.625rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 9999px;
+  background: var(--background);
+  border: 1px solid var(--border);
+}
+.ticket-tear::before {
+  left: -1.625rem;
+}
+.ticket-tear::after {
+  right: -1.625rem;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.rise-in {
+  animation: rise-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes fill-bar {
+  from {
+    transform: scaleX(0);
+  }
+}
+.fill-bar {
+  transform-origin: left;
+  animation: fill-bar 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise-in,
+  .fill-bar {
+    animation: none;
+  }
+}
