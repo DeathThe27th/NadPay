@@ -39,9 +39,8 @@ export function Landing() {
 
   return (
     <div className="relative flex min-h-dvh flex-col overflow-x-clip">
-      {/* Animated backdrop: drifting aurora over a faint dotted grid. */}
-      <div className="aurora" aria-hidden />
-      <div className="dot-grid" aria-hidden />
+      {/* Static backdrop: soft purple light + oversized logo rings. */}
+      <div className="landing-bg" aria-hidden />
 
       <header className="relative z-10 flex items-center justify-between px-5 py-4 sm:px-8">
         <Logo />
