@@ -19,7 +19,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "NadPay — payroll in one link",
+  title: "NadPay | payroll in one link",
   description:
     "Preset your team, fund the payout with one approval, drop one claim link in the chat. Recurring crypto payroll on Monad.",
 };

@@ -2,6 +2,7 @@
 
 import { useConnect } from "wagmi";
 import { ShieldCheck } from "lucide-react";
+import { DiaGradient } from "@/components/ui/dia-gradient";
 import { Hero10 } from "@/components/ui/hero-10";
 import { ConnectControl, Logo } from "@/components/shell";
 import { LogoMark } from "@/components/logo";
@@ -27,6 +28,20 @@ const STEPS = [
 
 const HERO_IMAGES = ["/hero/team.svg", "/hero/ticket.svg", "/hero/claimed.svg"];
 
+// Dia-style aurora restated in NadPay's own palette, bottom → top:
+// deep violet → brand purple → lavender near-white → magenta → transparent.
+const AURORA_STOPS = [
+  { offset: 0, color: "#231052" },
+  { offset: 0.16, color: "#4C22C8" },
+  { offset: 0.3, color: "#6D3EF0" },
+  { offset: 0.44, color: "#A98FF5" },
+  { offset: 0.56, color: "#E6DFFC" },
+  { offset: 0.68, color: "#C79BFA" },
+  { offset: 0.8, color: "#E070F0CC" },
+  { offset: 0.92, color: "#F2A9F866" },
+  { offset: 1, color: "#F9D3FC00" },
+];
+
 const HERO_ALTS = [
   "Team preset: four wallet addresses with MON amounts, saved on-chain",
   "Funded pay ticket with the claim link nadpay.xyz/claim/7 ready to copy",
@@ -39,16 +54,23 @@ export function Landing() {
 
   return (
     <div className="relative flex min-h-dvh flex-col overflow-x-clip">
-      {/* Static backdrop: soft purple light + oversized logo rings. */}
-      <div className="landing-bg" aria-hidden />
-
       <header className="relative z-10 flex items-center justify-between px-5 py-4 sm:px-8">
         <Logo />
         <ConnectControl />
       </header>
 
       <main className="relative flex-1">
-        <Hero10
+        <div className="relative">
+          {/* Dia-style aurora in NadPay purple, rising up behind the hero. */}
+          {/* Masked at its base so the glow dissolves before the next section
+              instead of ending in a hard band. */}
+          <div
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 opacity-70 [mask-image:linear-gradient(to_top,transparent_3%,black_48%)]"
+            aria-hidden
+          >
+            <DiaGradient stops={AURORA_STOPS} blur={18} />
+          </div>
+          <Hero10
           title="The whole payroll,"
           titleLine2Prefix="in"
           titleHighlight="one link."
@@ -77,7 +99,8 @@ export function Landing() {
             size: "lg",
             className: "rounded-full px-6 text-base",
           }}
-        />
+          />
+        </div>
 
         <section
           id="how-it-works"
