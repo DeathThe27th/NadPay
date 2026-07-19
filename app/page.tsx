@@ -209,7 +209,7 @@ export default function Dashboard() {
         <div className="flex flex-1 flex-col items-center justify-center gap-6 rise-in py-8">
           <div className="ticket w-full max-w-md rounded-2xl border border-border bg-surface p-6 sm:p-8">
             <p className="text-sm font-medium text-success">Payout funded ✓</p>
-            <h1 className="mt-1 font-display text-2xl">
+            <h1 className="mt-1 font-display text-2xl font-semibold tracking-tight">
               {formatMon(total)} MON is ready to claim
             </h1>
             <p className="mt-2 text-sm text-muted">
@@ -233,7 +233,7 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="w-full max-w-md space-y-3">
-            <h2 className="font-display text-lg">Claim status</h2>
+            <h2 className="font-display text-lg font-semibold">Claim status</h2>
             <RoundStatus roundId={createdRound} onChanged={history.refetch} />
           </div>
           <div className="flex gap-4 text-sm">
@@ -259,7 +259,9 @@ export default function Dashboard() {
     <Shell>
       <div className="rise-in space-y-6 pt-2">
         <div>
-          <h1 className="font-display text-2xl sm:text-3xl">My team</h1>
+          <h1 className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">
+            My Team
+          </h1>
           <p className="mt-1 text-sm text-muted">
             Preset who gets paid and how much. Saved on-chain, reused every
             payout.
@@ -381,7 +383,9 @@ export default function Dashboard() {
 
         <section className="space-y-4 pt-2">
           <div>
-            <h2 className="font-display text-xl sm:text-2xl">Your payouts</h2>
+            <h2 className="font-display text-xl font-semibold tracking-tight sm:text-2xl">
+              Your payouts
+            </h2>
             <p className="mt-1 text-sm text-muted">
               Every round you&apos;ve funded, with live claim status. Tap a row
               to see who&apos;s claimed.

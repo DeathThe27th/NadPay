@@ -94,7 +94,9 @@ export function ConnectGate({ headline }: { headline: string }) {
     <div className="flex flex-1 flex-col items-center justify-center gap-6 text-center rise-in">
       <LogoMark className="size-14" />
       <div className="space-y-2">
-        <h1 className="font-display text-2xl sm:text-3xl">{headline}</h1>
+        <h1 className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">
+          {headline}
+        </h1>
         <p className="mx-auto max-w-sm text-muted">
           Connect your wallet on Monad testnet to continue.
         </p>

@@ -3,7 +3,9 @@
 import { useConnect } from "wagmi";
 import { ShieldCheck } from "lucide-react";
 import { Hero10 } from "@/components/ui/hero-10";
-import { FloatingNav } from "@/components/navbar";
+import { ConnectControl, Logo } from "@/components/shell";
+import { LogoMark } from "@/components/logo";
+import { NADPAY_ADDRESS } from "@/lib/nadpay";
 
 const STEPS = [
   {
@@ -37,13 +39,16 @@ export function Landing() {
 
   return (
     <div className="relative flex min-h-dvh flex-col overflow-x-clip">
-      <FloatingNav />
-
       {/* Animated backdrop: drifting aurora over a faint dotted grid. */}
       <div className="aurora" aria-hidden />
       <div className="dot-grid" aria-hidden />
 
-      <main className="relative flex-1 pt-12 sm:pt-8">
+      <header className="relative z-10 flex items-center justify-between px-5 py-4 sm:px-8">
+        <Logo />
+        <ConnectControl />
+      </header>
+
+      <main className="relative flex-1">
         <Hero10
           title="The whole payroll,"
           titleLine2Prefix="in"
@@ -79,7 +84,7 @@ export function Landing() {
           id="how-it-works"
           className="mx-auto max-w-4xl scroll-mt-24 px-6 pb-20 sm:pb-24"
         >
-          <h2 className="text-center font-display text-2xl text-balance sm:text-3xl">
+          <h2 className="text-center font-display text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
             Payday in three moves
           </h2>
           <ol className="mt-8 grid gap-3 sm:grid-cols-3">
@@ -88,7 +93,7 @@ export function Landing() {
                 key={step.n}
                 className="rounded-2xl border border-border bg-background/80 p-5 backdrop-blur-sm"
               >
-                <span className="font-display text-2xl text-primary">
+                <span className="font-display text-2xl font-semibold text-primary">
                   {step.n}
                 </span>
                 <h3 className="mt-2 font-semibold">{step.title}</h3>
@@ -112,8 +117,70 @@ export function Landing() {
         </section>
       </main>
 
-      <footer className="relative px-5 py-5 text-center text-xs text-muted">
-        Runs on Monad testnet · payouts settle in native MON
+      <footer className="relative border-t border-border/70">
+        <div className="mx-auto w-full max-w-4xl px-6 py-10">
+          <div className="flex flex-col justify-between gap-8 sm:flex-row">
+            <div className="max-w-xs space-y-3">
+              <LogoMark className="size-8" />
+              <p className="text-sm text-muted">
+                Recurring crypto payroll on Monad. Preset your team, fund
+                payday once, share one claim link.
+              </p>
+            </div>
+            <nav className="flex gap-12 text-sm" aria-label="Footer">
+              <div className="space-y-2.5">
+                <p className="font-medium">Product</p>
+                <ul className="space-y-2 text-muted">
+                  <li>
+                    <a
+                      href="#how-it-works"
+                      className="hover:text-foreground transition-colors"
+                    >
+                      How it works
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#safety"
+                      className="hover:text-foreground transition-colors"
+                    >
+                      Safety
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div className="space-y-2.5">
+                <p className="font-medium">On-chain</p>
+                <ul className="space-y-2 text-muted">
+                  <li>
+                    <a
+                      href={`https://testnet.monadexplorer.com/address/${NADPAY_ADDRESS}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="hover:text-foreground transition-colors"
+                    >
+                      Contract
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="https://www.monad.xyz"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="hover:text-foreground transition-colors"
+                    >
+                      Monad
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </nav>
+          </div>
+          <div className="mt-8 flex flex-col justify-between gap-2 border-t border-border/70 pt-5 text-xs text-muted sm:flex-row">
+            <span>Runs on Monad testnet · payouts settle in native MON</span>
+            <span>© {new Date().getFullYear()} NadPay</span>
+          </div>
+        </div>
       </footer>
     </div>
   );

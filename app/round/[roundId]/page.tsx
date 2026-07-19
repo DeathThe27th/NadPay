@@ -69,7 +69,7 @@ export default function RoundPage({
       <div className="rise-in space-y-6 pt-2">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h1 className="font-display text-2xl sm:text-3xl">
+            <h1 className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">
               Payout #{roundIdParam}
             </h1>
             <p className="mt-1 font-mono text-lg font-semibold tabular">

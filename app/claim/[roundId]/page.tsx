@@ -252,7 +252,7 @@ function StatusCard({
         : "border-border bg-surface";
   return (
     <div className={`w-full rounded-2xl border p-6 sm:p-8 text-center ${toneClasses}`}>
-      <h1 className="font-display text-xl sm:text-2xl">{title}</h1>
+      <h1 className="font-display text-xl font-semibold sm:text-2xl">{title}</h1>
       <p className="mt-2 text-sm text-muted">{children}</p>
     </div>
   );
