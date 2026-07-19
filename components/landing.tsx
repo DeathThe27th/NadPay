@@ -78,7 +78,7 @@ export function Landing() {
           socialProof={
             noWallet
               ? "No wallet extension detected — install MetaMask or another injected wallet."
-              : "Live on Monad mainnet"
+              : undefined
           }
           images={HERO_IMAGES}
           imageAlts={HERO_ALTS}

@@ -22,6 +22,16 @@ export const NADPAY_ABI = [
   },
   {
     type: "function",
+    name: "claimAndSwap",
+    inputs: [
+      { name: "roundId", type: "uint256" },
+      { name: "minUsdcOut", type: "uint256" },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
     name: "createRound",
     inputs: [{ name: "claimWindowSeconds", type: "uint256" }],
     outputs: [{ name: "roundId", type: "uint256" }],
@@ -118,6 +128,17 @@ export const NADPAY_ABI = [
   },
   {
     type: "event",
+    name: "ClaimedAsUsdc",
+    inputs: [
+      { name: "roundId", type: "uint256", indexed: true },
+      { name: "recipient", type: "address", indexed: true },
+      { name: "amountMon", type: "uint256", indexed: false },
+      { name: "usdcOut", type: "uint256", indexed: false },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
     name: "RecipientsSaved",
     inputs: [
       { name: "payer", type: "address", indexed: true },
@@ -158,6 +179,7 @@ export const NADPAY_ABI = [
   { type: "error", name: "NothingToReclaim", inputs: [] },
   { type: "error", name: "Reentrancy", inputs: [] },
   { type: "error", name: "RoundClosed", inputs: [] },
+  { type: "error", name: "SwapUnavailable", inputs: [] },
   {
     type: "error",
     name: "WrongValue",

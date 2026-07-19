@@ -14,11 +14,11 @@ Deployed and verified on **Monad mainnet** (chain id `143`) — the contract is 
 
 | | |
 |---|---|
-| Address | [`0x42517273BE74153DF1aF39778f3EfdCf5C80f159`](https://monadscan.com/address/0x42517273BE74153DF1aF39778f3EfdCf5C80f159) |
-| Explorers | [MonadScan](https://monadscan.com/address/0x42517273BE74153DF1aF39778f3EfdCf5C80f159) · [MonadVision](https://monadvision.com/address/0x42517273BE74153DF1aF39778f3EfdCf5C80f159) |
-| Settlement | Native MON, pull-based claims |
+| Address | [`0x07324757Fd67FB597987635E1b7f1B767Bcd9494`](https://monadscan.com/address/0x07324757Fd67FB597987635E1b7f1B767Bcd9494) |
+| Explorers | [MonadScan](https://monadscan.com/address/0x07324757Fd67FB597987635E1b7f1B767Bcd9494) · [MonadVision](https://monadvision.com/address/0x07324757Fd67FB597987635E1b7f1B767Bcd9494) |
+| Settlement | Native MON or atomic in-claim swap to USDC, pull-based claims |
 
-The same contract source is also deployed at the same address on Monad testnet (chain `10143`) for safe demos; set `NEXT_PUBLIC_NETWORK=testnet` to point the app there. The ABI lives in `lib/nadpay.ts`; per-network addresses in `lib/network.ts`.
+An earlier revision without the atomic swap is deployed on Monad testnet (chain `10143`) at `0x42517273BE74153DF1aF39778f3EfdCf5C80f159` for safe demos; set `NEXT_PUBLIC_NETWORK=testnet` to point the app there. The ABI lives in `lib/nadpay.ts`; per-network addresses in `lib/network.ts`.
 
 One contract holds many payout rounds. Key functions:
 
@@ -26,9 +26,10 @@ One contract holds many payout rounds. Key functions:
 - `createRound(claimWindowSeconds)` — fund a round with `msg.value` equal to the exact template total
 - `createRoundCustom(recipients, amounts, window)` — one-off round without saving a template
 - `claim(roundId)` — whitelisted recipients pull their allocation, once
+- `claimAndSwap(roundId, minUsdcOut)` — same claim, but the MON is swapped to USDC through Uniswap inside the transaction; the recipient receives USDC only. Reverts atomically (allocation stays claimable) if the swap can't meet `minUsdcOut`
 - `reclaim(roundId)` — payer recovers leftovers after the deadline
 
-Checks-effects-interactions ordering, reentrancy guard, exact-funding enforcement. 20 Foundry tests including a reentrancy attack test and fuzzing. Verified live on mainnet with a small-amount end-to-end pass (create → claim MON → claim + swap to USDC → reclaim after deadline).
+Checks-effects-interactions ordering, reentrancy guard, exact-funding enforcement. 25 Foundry tests including reentrancy attacks (on both claim paths), swap-revert rollback, fuzzing, and a mainnet-fork test against the real Uniswap router. Verified live on mainnet with a small-amount end-to-end pass (create → claim MON → atomic claim-as-USDC → reclaim after deadline).
 
 ## Repo layout
 
@@ -52,9 +53,9 @@ npm run dev
 
 Open http://localhost:3000, connect an injected wallet (MetaMask etc.) on Monad, add teammates, and hit **Create payout**. Share the generated `/claim/{roundId}` link; track claims and reclaim leftovers at `/round/{roundId}`.
 
-## Claim as USDC (swap layer)
+## Claim as USDC (atomic swap layer)
 
-The claim page has an optional "receive as USDC" toggle: claim MON from NadPay, then swap MON→USDC in a second, explicitly-confirmed frontend transaction through Uniswap — quote preview, price impact, slippage guard, min-received, quote expiry, and simulation before send. Listed tokens are MON and USDC only. The gate logic is pure and unit-tested (`lib/swap.test.ts`).
+The claim page has an optional "receive as USDC" toggle: the claim transaction calls `claimAndSwap`, which routes the MON through Uniswap inside the same transaction — the recipient's wallet only ever receives USDC and only ever pays gas. The quote preview, price impact guard, slippage selector, min-received, quote expiry, and pre-send simulation all run before the user signs. Listed tokens are MON and USDC only. The gate logic is pure and unit-tested (`lib/swap.test.ts`).
 
 Live on mainnet against the Uniswap 0.3% WMON/USDC pool (all resolved via monad-crypto/protocols + monskills and verified on-chain, chain 143):
 

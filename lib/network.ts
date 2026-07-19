@@ -36,9 +36,11 @@ export const MAINNET: NetworkConfig = {
   chain: monad,
   rpcUrl: "https://rpc.monad.xyz",
   explorerUrl: "https://monadscan.com",
-  // Deployed 2026-07-19 (tx 0xb2ab6573…1824), verified on Monadscan +
-  // MonadVision. Same address as testnet: same deployer wallet, same nonce.
-  nadpayAddress: "0x42517273BE74153DF1aF39778f3EfdCf5C80f159",
+  // v2 with atomic claimAndSwap, deployed 2026-07-19 (tx 0x9b0deaad…47a0),
+  // verified on Monadscan + MonadVision. v1 (two-tx swap, no constructor)
+  // remains at 0x42517273BE74153DF1aF39778f3EfdCf5C80f159 with settled
+  // test rounds only.
+  nadpayAddress: "0x07324757Fd67FB597987635E1b7f1B767Bcd9494",
   swap: {
     router: "0xfE31F71C1b106EAc32F1A19239c9a9A72ddfb900",
     quoter: "0x661E93cca42AfacB172121EF892830cA3b70F08d",

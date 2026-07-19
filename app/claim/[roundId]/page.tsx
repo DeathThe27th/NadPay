@@ -1,12 +1,13 @@
 "use client";
 
 import { use, useState } from "react";
+import { formatUnits, parseEventLogs } from "viem";
 import { useAccount, usePublicClient, useReadContract, useWriteContract } from "wagmi";
 import { NADPAY_ABI, NADPAY_ADDRESS } from "@/lib/nadpay";
 import { activeChain } from "@/lib/wagmi";
 import { deadlineLabel, formatMon, shortAddress } from "@/lib/format";
 import { ConnectGate, Shell } from "@/components/shell";
-import { SwapPanel } from "@/components/swap-panel";
+import { SwapQuotePanel, useSwapQuote } from "@/components/swap-panel";
 import { SWAP_CONFIG } from "@/lib/swap";
 
 export default function ClaimPage({
@@ -23,6 +24,7 @@ export default function ClaimPage({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [justClaimed, setJustClaimed] = useState(false);
+  const [usdcReceived, setUsdcReceived] = useState<bigint | null>(null);
   const [receiveAs, setReceiveAs] = useState<"MON" | "USDC">("MON");
 
   const { data: round, refetch: refetchRound } = useReadContract({
@@ -48,18 +50,52 @@ export default function ClaimPage({
     query: { enabled: !!address },
   });
 
+  const claimingUsdc = receiveAs === "USDC" && SWAP_CONFIG !== null;
+  const swapQuote = useSwapQuote(
+    claimingUsdc ? SWAP_CONFIG : null,
+    roundId,
+    allocation ?? 0n,
+    address,
+  );
+
   async function doClaim() {
+    if (claimingUsdc && swapQuote.minOut === null) return;
     setBusy(true);
     setError(null);
     try {
-      const hash = await writeContractAsync({
-        address: NADPAY_ADDRESS,
-        abi: NADPAY_ABI,
-        functionName: "claim",
-        args: [roundId],
-        chainId: activeChain.id,
-      });
-      await publicClient!.waitForTransactionReceipt({ hash });
+      // Simulate first — reverts (slippage, drained pool) surface here
+      // instead of costing the user a failed transaction.
+      let hash: `0x${string}`;
+      if (claimingUsdc) {
+        const request = {
+          address: NADPAY_ADDRESS,
+          abi: NADPAY_ABI,
+          functionName: "claimAndSwap",
+          args: [roundId, swapQuote.minOut!] as const,
+          chainId: activeChain.id,
+        } as const;
+        await publicClient!.simulateContract({ ...request, account: address });
+        hash = await writeContractAsync(request);
+      } else {
+        const request = {
+          address: NADPAY_ADDRESS,
+          abi: NADPAY_ABI,
+          functionName: "claim",
+          args: [roundId] as const,
+          chainId: activeChain.id,
+        } as const;
+        await publicClient!.simulateContract({ ...request, account: address });
+        hash = await writeContractAsync(request);
+      }
+      const receipt = await publicClient!.waitForTransactionReceipt({ hash });
+      if (claimingUsdc) {
+        const [swapped] = parseEventLogs({
+          abi: NADPAY_ABI,
+          logs: receipt.logs,
+          eventName: "ClaimedAsUsdc",
+        });
+        setUsdcReceived(swapped?.args.usdcOut ?? null);
+      }
       setJustClaimed(true);
       await Promise.all([refetchRound(), refetchAllocation(), refetchClaimed()]);
     } catch (e) {
@@ -104,27 +140,13 @@ export default function ClaimPage({
     );
   } else if (claimed) {
     body = (
-      <>
-        <StatusCard tone="success" title={justClaimed ? "Paid ✓" : "Already claimed"}>
-          {justClaimed
-            ? `${formatMon(allocation ?? 0n)} MON just landed in your wallet.`
-            : "This wallet has already claimed its share of this payout."}
-        </StatusCard>
-        {justClaimed &&
-          receiveAs === "USDC" &&
-          SWAP_CONFIG &&
-          address &&
-          allocation != null &&
-          allocation > 0n && (
-            <div className="mt-4">
-              <SwapPanel
-                config={SWAP_CONFIG}
-                amountWei={allocation}
-                recipient={address}
-              />
-            </div>
-          )}
-      </>
+      <StatusCard tone="success" title={justClaimed ? "Paid ✓" : "Already claimed"}>
+        {justClaimed
+          ? usdcReceived !== null
+            ? `${formatUnits(usdcReceived, 6)} USDC just landed in your wallet — swapped from ${formatMon(allocation ?? 0n)} MON in one transaction.`
+            : `${formatMon(allocation ?? 0n)} MON just landed in your wallet.`
+          : "This wallet has already claimed its share of this payout."}
+      </StatusCard>
     );
   } else if (!live) {
     body = (
@@ -178,26 +200,44 @@ export default function ClaimPage({
           </div>
           {!SWAP_CONFIG && (
             <p className="text-xs text-muted">
-              USDC payouts (one extra swap via Uniswap) aren&apos;t available
+              USDC payouts (an in-claim swap via Uniswap) aren&apos;t available
               on this network. You&apos;ll receive MON.
             </p>
           )}
-          <button
-            onClick={doClaim}
-            disabled={busy}
-            className="w-full rounded-xl bg-primary py-3 text-base font-semibold text-white hover:bg-primary-strong transition-colors disabled:opacity-60"
-          >
-            {busy
-              ? "Claiming…"
-              : receiveAs === "USDC"
-                ? "Claim MON, then swap"
-                : "Claim my MON"}
-          </button>
-          {receiveAs === "USDC" && (
+          {claimingUsdc && SWAP_CONFIG && allocation && (
+            <SwapQuotePanel
+              quote={swapQuote}
+              config={SWAP_CONFIG}
+              amountWei={allocation}
+            />
+          )}
+          {claimingUsdc && swapQuote.decision.status === "stale" ? (
+            <button
+              onClick={swapQuote.refresh}
+              className="w-full rounded-xl border border-border bg-background py-3 text-base font-semibold hover:border-primary hover:text-primary transition-colors"
+            >
+              Quote expired — refresh
+            </button>
+          ) : (
+            <button
+              onClick={doClaim}
+              disabled={
+                busy || (claimingUsdc && swapQuote.decision.status !== "ok")
+              }
+              className="w-full rounded-xl bg-primary py-3 text-base font-semibold text-white hover:bg-primary-strong transition-colors disabled:opacity-60"
+            >
+              {busy
+                ? "Claiming…"
+                : claimingUsdc
+                  ? "Claim as USDC"
+                  : "Claim my MON"}
+            </button>
+          )}
+          {claimingUsdc && (
             <p className="text-xs text-muted">
-              Two steps: claim your MON first, then confirm a separate
-              MON→USDC swap on Uniswap. Not atomic — you can stop after step
-              one and keep MON.
+              One transaction: your MON is swapped to USDC inside the claim —
+              only USDC ever reaches your wallet. If the price moves past your
+              slippage, nothing happens and you can claim MON instead.
             </p>
           )}
           {error && <p className="mt-2 text-sm text-danger">{error}</p>}

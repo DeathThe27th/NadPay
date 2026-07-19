@@ -2,7 +2,32 @@
 pragma solidity ^0.8.20;
 
 import {Test} from "forge-std/Test.sol";
-import {NadPay} from "../src/NadPay.sol";
+import {NadPay, ISwapRouter02} from "../src/NadPay.sol";
+
+contract MockSwapRouter {
+    // USDC out (6 decimals) per 1e18 MON in.
+    uint256 public rate = 21_000;
+    address public lastRecipient;
+    uint256 public lastAmountIn;
+    NadPay public reenterTarget;
+
+    function exactInputSingle(ISwapRouter02.ExactInputSingleParams calldata p)
+        external
+        payable
+        returns (uint256 out)
+    {
+        require(msg.value == p.amountIn, "value != amountIn");
+        if (address(reenterTarget) != address(0)) reenterTarget.claim(0);
+        out = (p.amountIn * rate) / 1e18;
+        require(out >= p.amountOutMinimum, "Too little received");
+        lastRecipient = p.recipient;
+        lastAmountIn = p.amountIn;
+    }
+
+    function setReenterTarget(NadPay target) external {
+        reenterTarget = target;
+    }
+}
 
 contract Reenterer {
     NadPay private nadPay;
@@ -28,6 +53,7 @@ contract Reenterer {
 
 contract NadPayTest is Test {
     NadPay internal nadPay;
+    MockSwapRouter internal router;
 
     address internal payer = makeAddr("payer");
     address internal alice = makeAddr("alice");
@@ -35,10 +61,14 @@ contract NadPayTest is Test {
     address internal carol = makeAddr("carol");
     address internal stranger = makeAddr("stranger");
 
+    address internal wmon = makeAddr("wmon");
+    address internal usdc = makeAddr("usdc");
+
     uint256 internal constant WINDOW = 7 days;
 
     function setUp() public {
-        nadPay = new NadPay();
+        router = new MockSwapRouter();
+        nadPay = new NadPay(address(router), wmon, usdc, 3000);
         vm.deal(payer, 100 ether);
     }
 
@@ -187,6 +217,74 @@ contract NadPayTest is Test {
         // which makes the outer transfer fail.
         vm.expectRevert("transfer failed");
         reenterer.attack(roundId);
+    }
+
+    function test_ClaimAndSwap_DeliversUsdcOnly() public {
+        uint256 roundId = _createFundedRound();
+        uint256 minOut = (2 ether * router.rate()) / 1e18;
+        vm.prank(bob);
+        nadPay.claimAndSwap(roundId, minOut);
+
+        // MON went straight into the router; bob's MON balance never moved.
+        assertEq(bob.balance, 0);
+        assertEq(address(router).balance, 2 ether);
+        assertEq(router.lastRecipient(), bob);
+        assertEq(router.lastAmountIn(), 2 ether);
+        assertTrue(nadPay.hasClaimed(roundId, bob));
+        (,, uint256 claimed,,) = nadPay.getRound(roundId);
+        assertEq(claimed, 2 ether);
+    }
+
+    function test_ClaimAndSwap_RevertRollsBackClaim() public {
+        uint256 roundId = _createFundedRound();
+        uint256 tooMuch = (2 ether * router.rate()) / 1e18 + 1;
+        vm.prank(bob);
+        vm.expectRevert("Too little received");
+        nadPay.claimAndSwap(roundId, tooMuch);
+
+        // Nothing changed: still claimable, funds still in NadPay.
+        assertFalse(nadPay.hasClaimed(roundId, bob));
+        (,, uint256 claimed,,) = nadPay.getRound(roundId);
+        assertEq(claimed, 0);
+        assertEq(address(nadPay).balance, 6 ether);
+
+        // Falling back to a plain MON claim still works.
+        vm.prank(bob);
+        nadPay.claim(roundId);
+        assertEq(bob.balance, 2 ether);
+    }
+
+    function test_ClaimAndSwap_RevertsOnDoubleClaim() public {
+        uint256 roundId = _createFundedRound();
+        vm.startPrank(bob);
+        nadPay.claimAndSwap(roundId, 0);
+        vm.expectRevert(NadPay.AlreadyClaimed.selector);
+        nadPay.claimAndSwap(roundId, 0);
+        vm.expectRevert(NadPay.AlreadyClaimed.selector);
+        nadPay.claim(roundId);
+        vm.stopPrank();
+    }
+
+    function test_ClaimAndSwap_UnavailableWithoutRouter() public {
+        NadPay bare = new NadPay(address(0), address(0), address(0), 0);
+        address[] memory recipients = new address[](1);
+        uint256[] memory amounts = new uint256[](1);
+        recipients[0] = alice;
+        amounts[0] = 1 ether;
+        vm.prank(payer);
+        uint256 roundId = bare.createRoundCustom{value: 1 ether}(recipients, amounts, WINDOW);
+
+        vm.prank(alice);
+        vm.expectRevert(NadPay.SwapUnavailable.selector);
+        bare.claimAndSwap(roundId, 0);
+    }
+
+    function test_ClaimAndSwap_ReentrancyBlocked() public {
+        uint256 roundId = _createFundedRound();
+        router.setReenterTarget(nadPay);
+        vm.prank(bob);
+        vm.expectRevert(NadPay.Reentrancy.selector);
+        nadPay.claimAndSwap(roundId, 0);
     }
 
     function test_Reclaim() public {
