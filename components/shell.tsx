@@ -1,15 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { useAccount, useConnect, useDisconnect } from "wagmi";
+import {
+  useAccount,
+  useConnect,
+  useDisconnect,
+  useSwitchChain,
+} from "wagmi";
+import { monadTestnet } from "@/lib/wagmi";
 import { shortAddress } from "@/lib/format";
 import { LogoMark } from "@/components/logo";
 
 export function Logo() {
   return (
-    <Link href="/" className="flex items-center gap-2 font-semibold text-lg">
-      <LogoMark className="size-7" />
-      NadPay
+    <Link href="/" aria-label="NadPay home" className="flex items-center">
+      <LogoMark className="size-8" />
     </Link>
   );
 }
@@ -43,6 +48,28 @@ export function ConnectControl() {
   );
 }
 
+function NetworkBanner() {
+  const { isConnected, chainId } = useAccount();
+  const { switchChain, isPending } = useSwitchChain();
+
+  if (!isConnected || chainId === monadTestnet.id) return null;
+
+  return (
+    <div className="mx-auto mb-4 flex w-full max-w-2xl flex-wrap items-center justify-between gap-3 rounded-xl border border-danger/40 bg-danger-soft px-4 py-3 text-sm">
+      <span>
+        Your wallet is on the wrong network — NadPay runs on Monad testnet.
+      </span>
+      <button
+        onClick={() => switchChain({ chainId: monadTestnet.id })}
+        disabled={isPending}
+        className="rounded-lg bg-danger px-3 py-1.5 font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+      >
+        {isPending ? "Switching…" : "Switch network"}
+      </button>
+    </div>
+  );
+}
+
 export function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-dvh flex-col">
@@ -51,6 +78,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         <ConnectControl />
       </header>
       <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-5 pb-10 sm:px-8">
+        <NetworkBanner />
         {children}
       </main>
       <footer className="px-5 py-4 text-center text-xs text-muted">
@@ -66,7 +94,7 @@ export function ConnectGate({ headline }: { headline: string }) {
     <div className="flex flex-1 flex-col items-center justify-center gap-6 text-center rise-in">
       <LogoMark className="size-14" />
       <div className="space-y-2">
-        <h1 className="text-2xl font-semibold sm:text-3xl">{headline}</h1>
+        <h1 className="font-display text-2xl sm:text-3xl">{headline}</h1>
         <p className="mx-auto max-w-sm text-muted">
           Connect your wallet on Monad testnet to continue.
         </p>

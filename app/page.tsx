@@ -14,6 +14,11 @@ import { monadTestnet } from "@/lib/wagmi";
 import { formatMon, shortAddress } from "@/lib/format";
 import { Shell } from "@/components/shell";
 import { Landing } from "@/components/landing";
+import { CsvImport } from "@/components/csv-import";
+import { PayoutHistory, SummaryStrip } from "@/components/history";
+import { RoundStatus } from "@/components/round-status";
+import { usePayerRounds } from "@/lib/rounds";
+import type { CsvRow } from "@/lib/csv";
 
 type Row = { address: string; amount: string };
 
@@ -47,6 +52,8 @@ export default function Dashboard() {
   const [error, setError] = useState<string | null>(null);
   const [createdRound, setCreatedRound] = useState<bigint | null>(null);
   const [copied, setCopied] = useState(false);
+
+  const history = usePayerRounds(address);
 
   const { data: template, refetch: refetchTemplate } = useReadContract({
     address: NADPAY_ADDRESS,
@@ -110,6 +117,11 @@ export default function Dashboard() {
     setError(null);
   }
 
+  function importRows(csvRows: CsvRow[]) {
+    setRows(csvRows.map((row) => ({ address: row.address, amount: row.amount })));
+    setError(null);
+  }
+
   async function saveTeam() {
     if (!allValid || validRows.length === 0) return;
     setBusy("save");
@@ -167,6 +179,7 @@ export default function Dashboard() {
         eventName: "RoundCreated",
       });
       setCreatedRound(created.args.roundId);
+      void history.refetch();
     } catch (e) {
       setError(
         e instanceof Error ? e.message.split("\n")[0] : "Payout failed",
@@ -193,10 +206,10 @@ export default function Dashboard() {
     const claimPath = `/claim/${createdRound}`;
     return (
       <Shell>
-        <div className="flex flex-1 flex-col items-center justify-center gap-6 rise-in">
+        <div className="flex flex-1 flex-col items-center justify-center gap-6 rise-in py-8">
           <div className="ticket w-full max-w-md rounded-2xl border border-border bg-surface p-6 sm:p-8">
             <p className="text-sm font-medium text-success">Payout funded ✓</p>
-            <h1 className="mt-1 text-2xl font-semibold">
+            <h1 className="mt-1 font-display text-2xl">
               {formatMon(total)} MON is ready to claim
             </h1>
             <p className="mt-2 text-sm text-muted">
@@ -218,6 +231,10 @@ export default function Dashboard() {
                 </button>
               </div>
             </div>
+          </div>
+          <div className="w-full max-w-md space-y-3">
+            <h2 className="font-display text-lg">Claim status</h2>
+            <RoundStatus roundId={createdRound} onChanged={history.refetch} />
           </div>
           <div className="flex gap-4 text-sm">
             <Link
@@ -242,7 +259,7 @@ export default function Dashboard() {
     <Shell>
       <div className="rise-in space-y-6 pt-2">
         <div>
-          <h1 className="text-2xl font-semibold sm:text-3xl">My team</h1>
+          <h1 className="font-display text-2xl sm:text-3xl">My team</h1>
           <p className="mt-1 text-sm text-muted">
             Preset who gets paid and how much. Saved on-chain, reused every
             payout.
@@ -300,6 +317,7 @@ export default function Dashboard() {
           >
             + Add teammate
           </button>
+          <CsvImport onApply={importRows} />
         </div>
 
         <div className="flex flex-col gap-4 rounded-2xl border border-border bg-surface p-4 sm:p-5">
@@ -360,6 +378,23 @@ export default function Dashboard() {
             after the window comes back to you.
           </p>
         </div>
+
+        <section className="space-y-4 pt-2">
+          <div>
+            <h2 className="font-display text-xl sm:text-2xl">Your payouts</h2>
+            <p className="mt-1 text-sm text-muted">
+              Every round you&apos;ve funded, with live claim status. Tap a row
+              to see who&apos;s claimed.
+            </p>
+          </div>
+          <SummaryStrip summary={history.summary} />
+          <PayoutHistory
+            rounds={history.rounds}
+            isLoading={history.isLoading}
+            isError={history.isError}
+            refetch={history.refetch}
+          />
+        </section>
       </div>
     </Shell>
   );
