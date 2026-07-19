@@ -10,7 +10,7 @@ import {
   useWriteContract,
 } from "wagmi";
 import { NADPAY_ABI, NADPAY_ADDRESS } from "@/lib/nadpay";
-import { monadTestnet } from "@/lib/wagmi";
+import { activeChain } from "@/lib/wagmi";
 import { formatMon, shortAddress } from "@/lib/format";
 import { Shell } from "@/components/shell";
 import { Landing } from "@/components/landing";
@@ -135,7 +135,7 @@ export default function Dashboard() {
           validRows.map((row) => row.address as `0x${string}`),
           validRows.map((row) => parseEther(row.amount)),
         ],
-        chainId: monadTestnet.id,
+        chainId: activeChain.id,
       });
       await publicClient!.waitForTransactionReceipt({ hash });
       await refetchTemplate();
@@ -154,7 +154,7 @@ export default function Dashboard() {
       const common = {
         address: NADPAY_ADDRESS,
         abi: NADPAY_ABI,
-        chainId: monadTestnet.id,
+        chainId: activeChain.id,
         value: total,
       } as const;
       const hash = matchesTemplate

@@ -1,12 +1,12 @@
 "use client";
 
 import { useConnect } from "wagmi";
-import { ShieldCheck } from "lucide-react";
 import { DiaGradient } from "@/components/ui/dia-gradient";
 import { Hero10 } from "@/components/ui/hero-10";
 import { ConnectControl, Logo } from "@/components/shell";
 import { LogoMark } from "@/components/logo";
 import { NADPAY_ADDRESS } from "@/lib/nadpay";
+import { ACTIVE_NETWORK } from "@/lib/network";
 
 const STEPS = [
   {
@@ -78,7 +78,7 @@ export function Landing() {
           socialProof={
             noWallet
               ? "No wallet extension detected — install MetaMask or another injected wallet."
-              : "Monad testnet · no funds at risk"
+              : "Live on Monad mainnet"
           }
           images={HERO_IMAGES}
           imageAlts={HERO_ALTS}
@@ -125,18 +125,6 @@ export function Landing() {
           </ol>
         </section>
 
-        <section id="safety" className="mx-auto max-w-2xl scroll-mt-24 px-6 pb-20">
-          <div className="flex items-start gap-4 rounded-2xl border border-border bg-surface p-5 sm:items-center">
-            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-success-soft text-success">
-              <ShieldCheck className="size-5" aria-hidden />
-            </span>
-            <p className="text-sm text-muted">
-              Pull-based payouts mean a typo&apos;d address never loses funds —
-              only whitelisted wallets can claim, each exactly once, and
-              leftovers are reclaimable after the deadline.
-            </p>
-          </div>
-        </section>
       </main>
 
       <footer className="relative border-t border-border/70">
@@ -161,14 +149,6 @@ export function Landing() {
                       How it works
                     </a>
                   </li>
-                  <li>
-                    <a
-                      href="#safety"
-                      className="hover:text-foreground transition-colors"
-                    >
-                      Safety
-                    </a>
-                  </li>
                 </ul>
               </div>
               <div className="space-y-2.5">
@@ -176,7 +156,7 @@ export function Landing() {
                 <ul className="space-y-2 text-muted">
                   <li>
                     <a
-                      href={`https://testnet.monadexplorer.com/address/${NADPAY_ADDRESS}`}
+                      href={`${ACTIVE_NETWORK.explorerUrl}/address/${NADPAY_ADDRESS}`}
                       target="_blank"
                       rel="noreferrer"
                       className="hover:text-foreground transition-colors"
@@ -199,7 +179,7 @@ export function Landing() {
             </nav>
           </div>
           <div className="mt-8 flex flex-col justify-between gap-2 border-t border-border/70 pt-5 text-xs text-muted sm:flex-row">
-            <span>Runs on Monad testnet · payouts settle in native MON</span>
+            <span>Runs on Monad · payouts settle in native MON</span>
             <span>© {new Date().getFullYear()} NadPay</span>
           </div>
         </div>

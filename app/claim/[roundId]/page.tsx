@@ -3,7 +3,7 @@
 import { use, useState } from "react";
 import { useAccount, usePublicClient, useReadContract, useWriteContract } from "wagmi";
 import { NADPAY_ABI, NADPAY_ADDRESS } from "@/lib/nadpay";
-import { monadTestnet } from "@/lib/wagmi";
+import { activeChain } from "@/lib/wagmi";
 import { deadlineLabel, formatMon, shortAddress } from "@/lib/format";
 import { ConnectGate, Shell } from "@/components/shell";
 import { SwapPanel } from "@/components/swap-panel";
@@ -57,7 +57,7 @@ export default function ClaimPage({
         abi: NADPAY_ABI,
         functionName: "claim",
         args: [roundId],
-        chainId: monadTestnet.id,
+        chainId: activeChain.id,
       });
       await publicClient!.waitForTransactionReceipt({ hash });
       setJustClaimed(true);
@@ -178,9 +178,8 @@ export default function ClaimPage({
           </div>
           {!SWAP_CONFIG && (
             <p className="text-xs text-muted">
-              USDC payouts (one extra swap via Uniswap) are paused — Uniswap
-              hasn&apos;t redeployed since the Monad testnet reset. You&apos;ll
-              receive MON.
+              USDC payouts (one extra swap via Uniswap) aren&apos;t available
+              on this network. You&apos;ll receive MON.
             </p>
           )}
           <button

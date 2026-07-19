@@ -1,4 +1,6 @@
-export const NADPAY_ADDRESS = "0x42517273BE74153DF1aF39778f3EfdCf5C80f159" as const;
+import { ACTIVE_NETWORK } from "./network";
+
+export const NADPAY_ADDRESS = ACTIVE_NETWORK.nadpayAddress;
 
 export const NADPAY_ABI = [
   {

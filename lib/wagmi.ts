@@ -1,14 +1,16 @@
 import { createConfig, http } from "wagmi";
-import { monadTestnet } from "wagmi/chains";
+import { monad, monadTestnet } from "wagmi/chains";
 import { injected } from "wagmi/connectors";
+import { MAINNET, TESTNET, activeChain } from "./network";
 
 export const config = createConfig({
-  chains: [monadTestnet],
+  chains: [activeChain],
   connectors: [injected()],
   transports: {
-    [monadTestnet.id]: http("https://testnet-rpc.monad.xyz"),
+    [monad.id]: http(MAINNET.rpcUrl),
+    [monadTestnet.id]: http(TESTNET.rpcUrl),
   },
   ssr: true,
 });
 
-export { monadTestnet };
+export { activeChain };

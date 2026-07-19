@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { formatUnits } from "viem";
 import { usePublicClient, useWriteContract } from "wagmi";
-import { monadTestnet } from "@/lib/wagmi";
+import { activeChain } from "@/lib/wagmi";
 import { formatMon, shortAddress } from "@/lib/format";
 import {
   DEFAULT_SLIPPAGE_BPS,
@@ -159,7 +159,7 @@ export function SwapPanel({
         functionName: "exactInputSingle",
         args,
         value: amountWei,
-        chainId: monadTestnet.id,
+        chainId: activeChain.id,
       });
       setStatus("confirmed");
       const receipt = await publicClient!.waitForTransactionReceipt({ hash });

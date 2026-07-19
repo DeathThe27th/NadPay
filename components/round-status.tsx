@@ -8,7 +8,7 @@ import {
   useWriteContract,
 } from "wagmi";
 import { NADPAY_ABI, NADPAY_ADDRESS } from "@/lib/nadpay";
-import { monadTestnet } from "@/lib/wagmi";
+import { activeChain } from "@/lib/wagmi";
 import { formatMon, shortAddress } from "@/lib/format";
 
 const POLL_MS = 15_000;
@@ -42,7 +42,7 @@ export function ReclaimButton({
         abi: NADPAY_ABI,
         functionName: "reclaim",
         args: [roundId],
-        chainId: monadTestnet.id,
+        chainId: activeChain.id,
       });
       await publicClient!.waitForTransactionReceipt({ hash });
       setArmed(false);

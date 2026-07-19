@@ -7,7 +7,7 @@ import {
   useDisconnect,
   useSwitchChain,
 } from "wagmi";
-import { monadTestnet } from "@/lib/wagmi";
+import { activeChain } from "@/lib/wagmi";
 import { shortAddress } from "@/lib/format";
 import { LogoMark } from "@/components/logo";
 
@@ -52,15 +52,15 @@ function NetworkBanner() {
   const { isConnected, chainId } = useAccount();
   const { switchChain, isPending } = useSwitchChain();
 
-  if (!isConnected || chainId === monadTestnet.id) return null;
+  if (!isConnected || chainId === activeChain.id) return null;
 
   return (
     <div className="mx-auto mb-4 flex w-full max-w-2xl flex-wrap items-center justify-between gap-3 rounded-xl border border-danger/40 bg-danger-soft px-4 py-3 text-sm">
       <span>
-        Your wallet is on the wrong network — NadPay runs on Monad testnet.
+        Your wallet is on the wrong network — NadPay runs on {activeChain.name}.
       </span>
       <button
-        onClick={() => switchChain({ chainId: monadTestnet.id })}
+        onClick={() => switchChain({ chainId: activeChain.id })}
         disabled={isPending}
         className="rounded-lg bg-danger px-3 py-1.5 font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
       >
@@ -82,7 +82,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         {children}
       </main>
       <footer className="px-5 py-4 text-center text-xs text-muted">
-        Runs on Monad testnet · payouts settle in native MON
+        Runs on {activeChain.name} · payouts settle in native MON
       </footer>
     </div>
   );
@@ -98,7 +98,7 @@ export function ConnectGate({ headline }: { headline: string }) {
           {headline}
         </h1>
         <p className="mx-auto max-w-sm text-muted">
-          Connect your wallet on Monad testnet to continue.
+          Connect your wallet on {activeChain.name} to continue.
         </p>
       </div>
       <button

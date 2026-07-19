@@ -37,10 +37,10 @@ describe("swapDecision", () => {
     });
   });
 
-  it("ships hidden today: the live SWAP_CONFIG is null (no post-reset Uniswap testnet pool)", () => {
-    expect(
-      swapDecision({ ...base, config: SWAP_CONFIG }).status,
-    ).toBe("hidden");
+  it("ships live on mainnet: SWAP_CONFIG carries the verified 0.3% WMON/USDC pool", () => {
+    expect(SWAP_CONFIG).not.toBeNull();
+    expect(SWAP_CONFIG?.poolFee).toBe(3000);
+    expect(swapDecision({ ...base, config: SWAP_CONFIG }).status).toBe("ok");
   });
 
   it("disables when no quote / empty pool", () => {

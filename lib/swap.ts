@@ -7,26 +7,13 @@
  * SWAP_CONFIG is null the receive-as toggle never renders and the core claim
  * flow is byte-for-byte unaffected.
  *
- * Address provenance (chain 10143, checked 2026-07-18):
- * - USDC  0x534b2f3A21130d7a60830c2Df862319e593943A3
- *     source: monad-crypto/protocols testnet/Circle_USDC.json — verified
- *     on-chain (has code, symbol() == "USDC", decimals() == 6).
- * - WMON  0xFb8bf4c1CC7a94c73D209a149eA2AbEa852BC541
- *     source: docs.monad.xyz/developer-essentials/testnets — verified
- *     on-chain (has code, symbol() == "WMON").
- * - Uniswap: NOT DEPLOYED on the current testnet. Monad testnet was reset
- *     from genesis on 2025-12-16; the pre-reset Uniswap addresses in
- *     monad-crypto/protocols (V2/V3 routers + factories) all have no code on
- *     the live chain (checked via three independent RPCs), and Uniswap's
- *     official deployment docs list Monad MAINNET only. Per the build spec's
- *     locked rule we ship without the swap toggle rather than invent a pool.
- *
- * To enable: fill SWAP_CONFIG with a Uniswap-official router/quoter and a
- * cast-verified MON/USDC pool. Everything downstream lights up automatically.
+ * Per-network addresses (with provenance) live in lib/network.ts. On mainnet
+ * a verified WMON/USDC 0.3% pool exists so the config is live; testnet has no
+ * post-reset Uniswap deployment, so its config stays null and the toggle
+ * stays hidden there.
  */
 
-export const USDC_ADDRESS = "0x534b2f3A21130d7a60830c2Df862319e593943A3" as const;
-export const WMON_ADDRESS = "0xFb8bf4c1CC7a94c73D209a149eA2AbEa852BC541" as const;
+import { ACTIVE_NETWORK } from "./network";
 
 export type SwapConfig = {
   /** Uniswap SwapRouter02-compatible router, resolved from official docs. */
@@ -40,7 +27,7 @@ export type SwapConfig = {
 };
 
 /** null = no verified Uniswap MON<->USDC pool on this network; toggle hidden. */
-export const SWAP_CONFIG: SwapConfig | null = null;
+export const SWAP_CONFIG: SwapConfig | null = ACTIVE_NETWORK.swap;
 
 export const DEFAULT_SLIPPAGE_BPS = 100; // 1%
 export const MAX_PRICE_IMPACT_BPS = 500; // 5% — beyond this the USDC option is blocked
