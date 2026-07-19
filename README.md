@@ -1,6 +1,6 @@
 # NadPay — payroll in one link
 
-One-click recurring crypto payroll on [Monad](https://monad.xyz).
+One-click recurring crypto payroll on [Monad](https://monad.xyz) — **live at [nad-pay.vercel.app](https://nad-pay.vercel.app/)**.
 
 **The problem.** You're a founder paying your Discord mods every week — 10 people, a fixed amount each. Sending 10 separate transactions every week is tedious and easy to fumble.
 
