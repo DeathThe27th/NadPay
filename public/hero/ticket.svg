@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" font-family="ui-sans-serif, system-ui, sans-serif">
+  <defs>
+    <linearGradient id="tbg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6d4fe3"/>
+      <stop offset="1" stop-color="#5535c4"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="1000" fill="url(#tbg)"/>
+  <circle cx="680" cy="110" r="160" fill="#7d61e9" opacity="0.6"/>
+  <circle cx="90" cy="900" r="200" fill="#7d61e9" opacity="0.5"/>
+
+  <!-- interlocked rings watermark -->
+  <g opacity="0.25" stroke="#ffffff" stroke-width="14" fill="none">
+    <circle cx="352" cy="120" r="46"/>
+    <circle cx="410" cy="120" r="46"/>
+  </g>
+
+  <!-- pay ticket -->
+  <g>
+    <rect x="100" y="220" width="600" height="580" rx="36" fill="#ffffff"/>
+    <text x="150" y="316" font-size="26" font-weight="700" fill="#2e9e6b">Payout funded ✓</text>
+    <text x="150" y="384" font-size="46" font-weight="800" fill="#2b2740">4.8 MON ready</text>
+    <text x="150" y="432" font-size="26" fill="#6f6a85">Drop one link in the team chat.</text>
+    <text x="150" y="468" font-size="26" fill="#6f6a85">Everyone claims their own pay.</text>
+
+    <!-- tear line with notches -->
+    <line x1="132" y1="560" x2="668" y2="560" stroke="#e5e1f0" stroke-width="4" stroke-dasharray="14 12"/>
+    <circle cx="100" cy="560" r="22" fill="url(#tbg)"/>
+    <circle cx="700" cy="560" r="22" fill="url(#tbg)"/>
+
+    <!-- link chip -->
+    <rect x="150" y="618" width="500" height="84" rx="24" fill="#f6f4fc" stroke="#e5e1f0" stroke-width="2"/>
+    <text x="182" y="670" font-family="ui-monospace, monospace" font-size="26" fill="#2b2740">nadpay.xyz/claim/7</text>
+    <rect x="512" y="632" width="118" height="56" rx="16" fill="#6d4fe3"/>
+    <text x="571" y="668" font-size="24" font-weight="700" text-anchor="middle" fill="#ffffff">Copy</text>
+  </g>
+
+  <text x="400" y="880" font-size="28" font-weight="700" text-anchor="middle" fill="#ffffff" opacity="0.9">one link · whole payroll</text>
+</svg>

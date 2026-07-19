@@ -186,11 +186,7 @@ export default function Dashboard() {
   }
 
   if (!isConnected) {
-    return (
-      <Shell>
-        <Landing />
-      </Shell>
-    );
+    return <Landing />;
   }
 
   if (createdRound !== null) {
