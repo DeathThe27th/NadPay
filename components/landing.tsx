@@ -18,42 +18,13 @@ const TEAM = [
 function Brand() {
   return (
     <a href="#top" className="brand-lockup" aria-label="Nads2Pay home">
+      <svg className="brand-cube" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="m16 3 12 7-12 7L4 10 16 3Z" />
+        <path d="m4 10 12 7v12L4 22V10Z" />
+        <path d="m28 10-12 7v12l12-7V10Z" />
+      </svg>
       <span>Nads2Pay</span>
     </a>
-  );
-}
-
-function DemoWindow() {
-  const [copied, setCopied] = useState(false);
-  return (
-    <motion.div
-      className="hero-demo product-panel"
-      initial={{ y: 36, rotateX: 8 }}
-      animate={{ y: 0, rotateX: 0 }}
-      transition={{ duration: 0.9, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
-    >
-      <div className="panel-topline">
-        <span>Payday #07</span>
-        <span className="live-dot">Live</span>
-      </div>
-      <div className="demo-amount">8.40 <small>MON</small></div>
-      <p className="demo-meta">Funded for 4 recipients</p>
-      <div className="claim-url">
-        <span>nads2pay.xyz/claim/7</span>
-        <button
-          type="button"
-          aria-label="Copy demo claim link"
-          onClick={() => {
-            void navigator.clipboard?.writeText("nads2pay.xyz/claim/7");
-            setCopied(true);
-            window.setTimeout(() => setCopied(false), 1400);
-          }}
-        >
-          {copied ? <Check size={16} /> : <Copy size={16} />}
-          {copied ? "Copied" : "Copy"}
-        </button>
-      </div>
-    </motion.div>
   );
 }
 
@@ -146,7 +117,6 @@ export function Landing() {
             </motion.div>
             {noWallet && <p className="wallet-note">Install an injected wallet such as MetaMask to continue.</p>}
           </div>
-          <DemoWindow />
         </section>
 
         <div id="how-it-works" ref={storyRef} className="story-world">
