@@ -36,8 +36,11 @@ export function VoxelTopographyGrid({
     let time = 0;
     let visible = document.visibilityState === "visible";
     let inViewport = true;
+    let scrolling = false;
+    let scrollTimer = 0;
     let lastFrame = 0;
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const lowPower = window.matchMedia("(max-width: 767px), (pointer: coarse)").matches;
     const cleanHex = primaryColor.replace("#", "");
     const value = Number.parseInt(cleanHex.length === 3 ? cleanHex.split("").map((c) => c + c).join("") : cleanHex, 16);
     const rgb = { r: (value >> 16) & 255, g: (value >> 8) & 255, b: value & 255 };
@@ -69,9 +72,15 @@ export function VoxelTopographyGrid({
     };
     const leave = () => { pointerRef.current.targetX = -1000; pointerRef.current.targetY = -1000; };
     const visibility = () => { visible = document.visibilityState === "visible"; };
+    const handleScroll = () => {
+      scrolling = true;
+      window.clearTimeout(scrollTimer);
+      scrollTimer = window.setTimeout(() => { scrolling = false; }, 120);
+    };
     container.addEventListener("pointermove", move, { passive: true });
     container.addEventListener("pointerleave", leave, { passive: true });
     document.addEventListener("visibilitychange", visibility);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     const intersectionObserver = new IntersectionObserver(([entry]) => {
       inViewport = entry.isIntersecting;
     }, { rootMargin: "80px" });
@@ -81,9 +90,9 @@ export function VoxelTopographyGrid({
     const tileH = tileSize * .5;
     const radiusSq = 210 * 210;
     const draw = (timestamp = 0) => {
-      if (visible && inViewport && (reduceMotion || timestamp - lastFrame >= 33)) {
+      if (visible && inViewport && !scrolling && (reduceMotion || lowPower || timestamp - lastFrame >= 33)) {
         lastFrame = timestamp;
-        if (!reduceMotion) time += speed;
+        if (!reduceMotion && !lowPower) time += speed;
         pointerRef.current.x += (pointerRef.current.targetX - pointerRef.current.x) * .24;
         pointerRef.current.y += (pointerRef.current.targetY - pointerRef.current.y) * .24;
         ctx.fillStyle = "#080918";
@@ -114,7 +123,7 @@ export function VoxelTopographyGrid({
           }
         }
       }
-      if (!reduceMotion) frame = requestAnimationFrame(draw);
+      if (!reduceMotion && !lowPower) frame = requestAnimationFrame(draw);
     };
     draw();
     return () => {
@@ -122,6 +131,8 @@ export function VoxelTopographyGrid({
       container.removeEventListener("pointermove", move);
       container.removeEventListener("pointerleave", leave);
       document.removeEventListener("visibilitychange", visibility);
+      window.removeEventListener("scroll", handleScroll);
+      window.clearTimeout(scrollTimer);
       intersectionObserver.disconnect();
       cancelAnimationFrame(frame);
     };
