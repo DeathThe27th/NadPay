@@ -257,139 +257,102 @@ export default function Dashboard() {
 
   return (
     <Shell>
-      <div className="rise-in space-y-6 pt-2">
-        <div>
-          <h1 className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">
-            My Team
-          </h1>
-          <p className="mt-1 text-sm text-muted">
-            Preset who gets paid and how much. Saved on-chain, reused every
-            payout.
-          </p>
-        </div>
-
-        <div className="space-y-2">
-          {rows.map((row, i) => {
-            const err = rowError(row);
-            return (
-              <div key={i} className="flex items-start gap-2">
-                <div className="min-w-0 flex-1">
-                  <input
-                    value={row.address}
-                    onChange={(e) => updateRow(i, { address: e.target.value })}
-                    placeholder="0x wallet address"
-                    spellCheck={false}
-                    className="w-full rounded-xl border border-border bg-background px-3 py-2.5 font-mono text-sm placeholder:text-muted/70 focus:border-primary focus:outline-none"
-                  />
-                  {err && <p className="mt-1 text-xs text-danger">{err}</p>}
-                </div>
-                <div className="relative w-32 shrink-0">
-                  <input
-                    value={row.amount}
-                    onChange={(e) => updateRow(i, { amount: e.target.value })}
-                    placeholder="0"
-                    inputMode="decimal"
-                    className="w-full rounded-xl border border-border bg-background px-3 py-2.5 pr-12 text-right font-mono text-sm tabular placeholder:text-muted/70 focus:border-primary focus:outline-none"
-                  />
-                  <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs font-medium text-muted">
-                    MON
-                  </span>
-                </div>
-                <button
-                  onClick={() =>
-                    setRows((prev) =>
-                      prev.length === 1
-                        ? [{ address: "", amount: "" }]
-                        : prev.filter((_, j) => j !== i),
-                    )
-                  }
-                  aria-label="Remove row"
-                  className="mt-1.5 grid size-8 shrink-0 place-items-center rounded-lg text-muted hover:bg-danger-soft hover:text-danger transition-colors"
-                >
-                  ✕
-                </button>
-              </div>
-            );
-          })}
-          <button
-            onClick={() =>
-              setRows((prev) => [...prev, { address: "", amount: "" }])
-            }
-            className="w-full rounded-xl border border-dashed border-border py-2.5 text-sm font-medium text-muted hover:border-primary hover:text-primary transition-colors"
-          >
-            + Add teammate
-          </button>
-          <CsvImport onApply={importRows} />
-        </div>
-
-        <div className="flex flex-col gap-4 rounded-2xl border border-border bg-surface p-4 sm:p-5">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-muted">Total per payout</span>
-            <span className="font-mono text-lg font-semibold tabular">
-              {formatMon(total)} MON
-            </span>
-          </div>
-          <div className="flex items-center justify-between gap-3">
-            <label htmlFor="window" className="text-sm text-muted">
-              Claim window
-            </label>
-            <select
-              id="window"
-              value={windowSeconds}
-              onChange={(e) => setWindowSeconds(Number(e.target.value))}
-              className="rounded-lg border border-border bg-background px-2.5 py-1.5 text-sm focus:border-primary focus:outline-none"
-            >
-              {CLAIM_WINDOWS.map((w) => (
-                <option key={w.seconds} value={w.seconds}>
-                  {w.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <button
-              onClick={saveTeam}
-              disabled={
-                busy !== null ||
-                !allValid ||
-                validRows.length === 0 ||
-                matchesTemplate
-              }
-              className="rounded-xl border border-border bg-background px-4 py-2.5 text-sm font-semibold hover:border-primary hover:text-primary transition-colors disabled:opacity-50 disabled:hover:border-border disabled:hover:text-foreground"
-            >
-              {busy === "save"
-                ? "Saving…"
-                : matchesTemplate
-                  ? "Team saved ✓"
-                  : "Save team on-chain"}
-            </button>
-            <button
-              onClick={createPayout}
-              disabled={busy !== null || !allValid || total === 0n}
-              className="flex-1 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-strong transition-colors disabled:opacity-50"
-            >
-              {busy === "create"
-                ? "Funding payout…"
-                : `Create payout · ${formatMon(total)} MON`}
-            </button>
-          </div>
-          {error && <p className="text-sm text-danger">{error}</p>}
-          <p className="text-xs text-muted">
-            Creating a payout funds it in full from your wallet
-            {address ? ` (${shortAddress(address)})` : ""}. Anything unclaimed
-            after the window comes back to you.
-          </p>
-        </div>
-
-        <section className="space-y-4 pt-2">
+      <div className="dashboard-workspace rise-in">
+        <header className="dashboard-intro">
           <div>
-            <h2 className="font-display text-xl font-semibold tracking-tight sm:text-2xl">
-              Your payouts
-            </h2>
-            <p className="mt-1 text-sm text-muted">
-              Every round you&apos;ve funded, with live claim status. Tap a row
-              to see who&apos;s claimed.
-            </p>
+            <p>Connected payday workspace</p>
+            <h1>Move payroll in one transaction.</h1>
+            <span>Set the team, review the total, then fund the round.</span>
+          </div>
+          <div className="dashboard-route" aria-hidden="true"><i /><i /><i /></div>
+        </header>
+
+        <div className="dashboard-grid">
+          <section className="team-editor" aria-labelledby="team-heading">
+            <div className="workspace-heading">
+              <div>
+                <h2 id="team-heading">My team</h2>
+                <p>Wallet addresses and recurring MON allocations.</p>
+              </div>
+              <span>{validRows.length} recipients</span>
+            </div>
+
+            <div className="space-y-2">
+              {rows.map((row, i) => {
+                const err = rowError(row);
+                return (
+                  <div key={i} className="recipient-row">
+                    <span className="recipient-index">{String(i + 1).padStart(2, "0")}</span>
+                    <div className="min-w-0 flex-1">
+                      <input
+                        value={row.address}
+                        onChange={(e) => updateRow(i, { address: e.target.value })}
+                        placeholder="0x wallet address"
+                        aria-label={`Recipient ${i + 1} wallet address`}
+                        spellCheck={false}
+                        className="workspace-input font-mono"
+                      />
+                      {err && <p className="mt-1 text-xs text-danger">{err}</p>}
+                    </div>
+                    <div className="amount-input">
+                      <input
+                        value={row.amount}
+                        onChange={(e) => updateRow(i, { amount: e.target.value })}
+                        placeholder="0"
+                        aria-label={`Recipient ${i + 1} amount in MON`}
+                        inputMode="decimal"
+                        className="workspace-input text-right font-mono tabular"
+                      />
+                      <span>MON</span>
+                    </div>
+                    <button
+                      onClick={() => setRows((prev) => prev.length === 1 ? [{ address: "", amount: "" }] : prev.filter((_, j) => j !== i))}
+                      aria-label={`Remove recipient ${i + 1}`}
+                      className="remove-recipient"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                );
+              })}
+              <button onClick={() => setRows((prev) => [...prev, { address: "", amount: "" }])} className="add-recipient">
+                <span>+</span> Add teammate
+              </button>
+              <CsvImport onApply={importRows} />
+            </div>
+          </section>
+
+          <aside className="payout-console" aria-labelledby="payout-heading">
+            <div className="console-signal"><i /><i /><i /><i /></div>
+            <p id="payout-heading">Next payout</p>
+            <div className="console-total"><strong>{formatMon(total)}</strong><span>MON</span></div>
+            <div className="console-detail"><span>{validRows.length} recipients</span><span>{CLAIM_WINDOWS.find((w) => w.seconds === windowSeconds)?.label} to claim</span></div>
+            <label htmlFor="window" className="console-field">
+              <span>Claim window</span>
+              <select id="window" value={windowSeconds} onChange={(e) => setWindowSeconds(Number(e.target.value))}>
+                {CLAIM_WINDOWS.map((w) => <option key={w.seconds} value={w.seconds}>{w.label}</option>)}
+              </select>
+            </label>
+            <div className="console-actions">
+              <button onClick={saveTeam} disabled={busy !== null || !allValid || validRows.length === 0 || matchesTemplate} className="console-secondary">
+                {busy === "save" ? "Saving…" : matchesTemplate ? "Team saved ✓" : "Save team on-chain"}
+              </button>
+              <button onClick={createPayout} disabled={busy !== null || !allValid || total === 0n} className="console-primary">
+                {busy === "create" ? "Funding payout…" : "Fund payout"}
+              </button>
+            </div>
+            {error && <p className="console-error">{error}</p>}
+            <p className="console-note">Funds leave {address ? shortAddress(address) : "your wallet"} only after confirmation. Unclaimed MON can return after the window closes.</p>
+          </aside>
+        </div>
+
+        <section className="history-workspace">
+          <div className="workspace-heading">
+            <div>
+              <h2>Your payouts</h2>
+              <p>Live claim status for every funded round.</p>
+            </div>
+            <span>On-chain history</span>
           </div>
           <SummaryStrip summary={history.summary} />
           <PayoutHistory

@@ -13,7 +13,12 @@ import { LogoMark } from "@/components/logo";
 
 export function Logo() {
   return (
-    <Link href="/" aria-label="NadPay home" className="flex items-center">
+    <Link href="/" aria-label="Nads2Pay home" className="app-brand">
+      <svg className="app-brand-cube" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="m16 3 12 7-12 7L4 10 16 3Z" />
+        <path d="m4 10 12 7v12L4 22V10Z" />
+        <path d="m28 10-12 7v12l12-7V10Z" />
+      </svg>
       <LogoMark className="size-8" />
     </Link>
   );
@@ -72,16 +77,18 @@ function NetworkBanner() {
 
 export function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-dvh flex-col">
-      <header className="flex items-center justify-between px-5 py-4 sm:px-8">
-        <Logo />
-        <ConnectControl />
+    <div className="app-shell flex min-h-dvh flex-col">
+      <header className="app-topbar">
+        <div className="app-topbar-inner">
+          <Logo />
+          <ConnectControl />
+        </div>
       </header>
-      <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-5 pb-10 sm:px-8">
+      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-5 pb-10 pt-6 sm:px-8 sm:pt-8">
         <NetworkBanner />
         {children}
       </main>
-      <footer className="px-5 py-4 text-center text-xs text-muted">
+      <footer className="app-footer px-5 py-5 text-center text-xs text-muted">
         Runs on {activeChain.name} · payouts settle in native MON
       </footer>
     </div>
