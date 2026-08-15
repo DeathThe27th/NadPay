@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { ArrowDown, ArrowUpRight, Check, Copy, Menu, X } from "lucide-react";
 import { useConnect } from "wagmi";
-import { LogoMark } from "@/components/logo";
+import { VoxelTopographyGrid } from "@/components/ui/voxel-topography-grid";
 import { NADPAY_ADDRESS } from "@/lib/nadpay";
 import { ACTIVE_NETWORK } from "@/lib/network";
 
@@ -18,23 +18,8 @@ const TEAM = [
 function Brand() {
   return (
     <a href="#top" className="brand-lockup" aria-label="Nads2Pay home">
-      <LogoMark className="size-8" />
       <span>Nads2Pay</span>
     </a>
-  );
-}
-
-function PayToken() {
-  return (
-    <motion.div
-      className="pay-token"
-      animate={{ y: [0, -10, 0], rotate: [0, 4, 0] }}
-      transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-      aria-hidden="true"
-    >
-      <img src="/brand/nads2pay-mascot-v1.webp" alt="" className="size-full object-contain" />
-      <span className="token-ring" />
-    </motion.div>
   );
 }
 
@@ -107,7 +92,7 @@ function StoryCard({ type }: { type: "team" | "fund" | "share" | "claim" | "retu
     return (
       <div className="product-panel story-card claim-card">
         <p>You have a payment</p><div className="demo-amount">1.60 <small>MON</small></div>
-        <div className="sender-row"><LogoMark className="size-8" /><span>From<strong>Nads2Pay Payroll #07</strong></span></div>
+        <div className="sender-row"><span>From<strong>Nads2Pay Payroll #07</strong></span></div>
         <button type="button" className="demo-button"><Check size={17} /> Payment claimed</button>
       </div>
     );
@@ -134,7 +119,6 @@ export function Landing() {
   const storyRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: storyRef, offset: ["start 70%", "end 50%"] });
   const trailLength = useTransform(scrollYProgress, [0, 1], [0, 1]);
-  const tokenY = useTransform(scrollYProgress, [0, 1], [0, 820]);
   const noWallet = connectors.length === 0;
   const connectWallet = () => connectors[0] && connect({ connector: connectors[0] });
 
@@ -151,8 +135,8 @@ export function Landing() {
 
       <main>
         <section className="cinematic-hero" aria-labelledby="hero-title">
-          <div className="hero-haze" aria-hidden="true" /><div className="hero-geometry" aria-hidden="true"><i /><i /><i /><i /></div>
-          <PayToken />
+          <VoxelTopographyGrid className="hero-voxel-field" />
+          <div className="hero-voxel-shade" aria-hidden="true" />
           <div className="hero-copy">
             <motion.h1 id="hero-title" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .75, ease: [0.16, 1, 0.3, 1] }}>The whole payroll,<br /><span>in one link.</span></motion.h1>
             <motion.p className="hero-body" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .18 }}>Preset your team, fund payday once, and drop one claim link. Everyone pulls their own pay — on Monad.</motion.p>
@@ -171,7 +155,6 @@ export function Landing() {
             <path className="trail-glow" d="M50 0 C92 100 10 190 54 290 S90 445 42 540 S12 710 62 805 S82 930 50 1000" />
             <motion.path style={{ pathLength: trailLength }} d="M50 0 C92 100 10 190 54 290 S90 445 42 540 S12 710 62 805 S82 930 50 1000" />
           </svg>
-          <motion.div className="trail-token" style={{ y: tokenY }} aria-hidden="true"><LogoMark className="size-9" /></motion.div>
           {STORIES.map((story, index) => (
             <section id={story.id === "team" ? "why" : story.id} className={`story-chapter ${index % 2 ? "reverse" : ""}`} key={story.id}>
               <motion.div className="story-copy" initial={{ opacity: .35, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ amount: .45 }} transition={{ duration: .7, ease: [0.16, 1, 0.3, 1] }}>
@@ -184,16 +167,16 @@ export function Landing() {
         </div>
 
         <section id="monad" className="monad-chapter">
-          <div className="monad-orbit" aria-hidden="true"><span>MON</span></div>
+          <div className="monad-lines" aria-hidden="true"><i /><i /><i /></div>
           <div><h2>Payroll,<br />at Monad speed.</h2><p>Nads2Pay runs on Monad and settles payouts in native MON.</p><div className="text-links"><a href={`${ACTIVE_NETWORK.explorerUrl}/address/${NADPAY_ADDRESS}`} target="_blank" rel="noreferrer">View contract <ArrowUpRight size={16} /></a><a href="https://www.monad.xyz" target="_blank" rel="noreferrer">Learn about Monad <ArrowUpRight size={16} /></a></div></div>
         </section>
 
         <section className="final-cta">
-          <PayToken /><h2>Your team.<br />One payday link.</h2><p>Preset your team and run the next payday on Nads2Pay.</p><button type="button" className="primary-cta" disabled={isPending || noWallet} onClick={connectWallet}>{isPending ? "Connecting…" : "Connect wallet"}<ArrowUpRight size={18} /></button>
+          <h2>Your team.<br />One payday link.</h2><p>Preset your team and run the next payday on Nads2Pay.</p><button type="button" className="primary-cta" disabled={isPending || noWallet} onClick={connectWallet}>{isPending ? "Connecting…" : "Connect wallet"}<ArrowUpRight size={18} /></button>
         </section>
       </main>
 
-      <footer className="landing-footer"><div><Brand /></div><nav aria-label="Footer"><a href="#how-it-works">How it works</a><a href={`${ACTIVE_NETWORK.explorerUrl}/address/${NADPAY_ADDRESS}`} target="_blank" rel="noreferrer">Contract</a><a href="https://www.monad.xyz" target="_blank" rel="noreferrer">Monad</a></nav><div className="footer-base"><span>Runs on Monad · payouts settle in native MON</span><span>© {new Date().getFullYear()} Nads2Pay</span></div></footer>
+      <footer className="landing-footer"><nav aria-label="Footer"><a href="#how-it-works">How it works</a><a href={`${ACTIVE_NETWORK.explorerUrl}/address/${NADPAY_ADDRESS}`} target="_blank" rel="noreferrer">Contract</a><a href="https://www.monad.xyz" target="_blank" rel="noreferrer">Monad</a></nav><div className="footer-base"><span>Runs on Monad · payouts settle in native MON</span><span>© {new Date().getFullYear()} Nads2Pay</span></div></footer>
     </div>
   );
 }
