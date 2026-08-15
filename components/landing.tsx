@@ -4,7 +4,6 @@ import { useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { ArrowDown, ArrowUpRight, Check, Copy, Menu, X } from "lucide-react";
 import { useConnect } from "wagmi";
-import { ConnectControl } from "@/components/shell";
 import { LogoMark } from "@/components/logo";
 import { NADPAY_ADDRESS } from "@/lib/nadpay";
 import { ACTIVE_NETWORK } from "@/lib/network";
@@ -33,7 +32,7 @@ function PayToken() {
       transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
       aria-hidden="true"
     >
-      <LogoMark className="size-full" />
+      <img src="/brand/nads2pay-mascot-v1.webp" alt="" className="size-full object-contain" />
       <span className="token-ring" />
     </motion.div>
   );
@@ -146,17 +145,15 @@ export function Landing() {
         <nav className="nav-links" aria-label="Main navigation">
           <a href="#how-it-works">How it works</a><a href="#why">Why Nads2Pay</a><a href="#monad">Monad</a>
         </nav>
-        <ConnectControl />
         <button className="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X /> : <Menu />}</button>
         {menuOpen && <nav className="mobile-menu"><a href="#how-it-works" onClick={() => setMenuOpen(false)}>How it works</a><a href="#why" onClick={() => setMenuOpen(false)}>Why Nads2Pay</a><a href="#monad" onClick={() => setMenuOpen(false)}>Monad</a></nav>}
       </header>
 
       <main>
         <section className="cinematic-hero" aria-labelledby="hero-title">
-          <div className="hero-haze" aria-hidden="true" /><div className="hero-orbit" aria-hidden="true" />
+          <div className="hero-haze" aria-hidden="true" /><div className="hero-geometry" aria-hidden="true"><i /><i /><i /><i /></div>
           <PayToken />
           <div className="hero-copy">
-            <motion.p className="hero-kicker" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>Recurring crypto payroll on Monad</motion.p>
             <motion.h1 id="hero-title" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .75, ease: [0.16, 1, 0.3, 1] }}>The whole payroll,<br /><span>in one link.</span></motion.h1>
             <motion.p className="hero-body" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .18 }}>Preset your team, fund payday once, and drop one claim link. Everyone pulls their own pay — on Monad.</motion.p>
             <motion.div className="hero-actions" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .3 }}>
@@ -196,7 +193,7 @@ export function Landing() {
         </section>
       </main>
 
-      <footer className="landing-footer"><div><Brand /><p>Recurring crypto payroll on Monad.</p></div><nav aria-label="Footer"><a href="#how-it-works">How it works</a><a href={`${ACTIVE_NETWORK.explorerUrl}/address/${NADPAY_ADDRESS}`} target="_blank" rel="noreferrer">Contract</a><a href="https://www.monad.xyz" target="_blank" rel="noreferrer">Monad</a></nav><div className="footer-base"><span>Runs on Monad · payouts settle in native MON</span><span>© {new Date().getFullYear()} Nads2Pay</span></div></footer>
+      <footer className="landing-footer"><div><Brand /></div><nav aria-label="Footer"><a href="#how-it-works">How it works</a><a href={`${ACTIVE_NETWORK.explorerUrl}/address/${NADPAY_ADDRESS}`} target="_blank" rel="noreferrer">Contract</a><a href="https://www.monad.xyz" target="_blank" rel="noreferrer">Monad</a></nav><div className="footer-base"><span>Runs on Monad · payouts settle in native MON</span><span>© {new Date().getFullYear()} Nads2Pay</span></div></footer>
     </div>
   );
 }

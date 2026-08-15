@@ -21,7 +21,7 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   title: "NadPay | payroll in one link",
   description:
-    "Preset your team, fund the payout with one approval, drop one claim link in the chat. Recurring crypto payroll on Monad.",
+    "Preset your team, fund payday once, and share one claim link. Everyone pulls their own pay on Monad.",
 };
 
 export default function RootLayout({
