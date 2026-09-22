@@ -19,9 +19,9 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "NadPay | payroll in one link",
+  title: "Naday | payroll in one link",
   description:
-    "Preset your team, fund payday once, and share one claim link. Everyone pulls their own pay on Monad.",
+    "Naday lets teams preset payroll, fund payday once, and share one claim link on Monad.",
 };
 
 export default function RootLayout({
