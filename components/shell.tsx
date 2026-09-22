@@ -13,8 +13,13 @@ import { LogoMark } from "@/components/logo";
 
 export function Logo() {
   return (
-    <Link href="/" aria-label="Naday home" className="app-brand">
-      <LogoMark />
+    <Link href="/" aria-label="Nads2Pay home" className="app-brand">
+      <svg className="app-brand-cube" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="m16 3 12 7-12 7L4 10 16 3Z" />
+        <path d="m4 10 12 7v12L4 22V10Z" />
+        <path d="m28 10-12 7v12l12-7V10Z" />
+      </svg>
+      <LogoMark className="size-8" />
     </Link>
   );
 }
@@ -57,7 +62,7 @@ function NetworkBanner() {
   return (
     <div className="mx-auto mb-4 flex w-full max-w-2xl flex-wrap items-center justify-between gap-3 rounded-xl border border-danger/40 bg-danger-soft px-4 py-3 text-sm">
       <span>
-        Your wallet is on the wrong network — Naday runs on {activeChain.name}.
+        Your wallet is on the wrong network — NadPay runs on {activeChain.name}.
       </span>
       <button
         onClick={() => switchChain({ chainId: activeChain.id })}
@@ -94,7 +99,7 @@ export function ConnectGate({ headline }: { headline: string }) {
   const { connect, connectors, isPending } = useConnect();
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-6 text-center rise-in">
-      <LogoMark className="connect-logo" />
+      <LogoMark className="size-14" />
       <div className="space-y-2">
         <h1 className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">
           {headline}

@@ -1,4 +1,4 @@
-# Naday — payroll in one link
+# NadPay — payroll in one link
 
 One-click recurring crypto payroll on [Monad](https://monad.xyz) — **live at [nad-pay.vercel.app](https://nad-pay.vercel.app/)**.
 
