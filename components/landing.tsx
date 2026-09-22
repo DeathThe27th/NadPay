@@ -18,7 +18,7 @@ const TEAM = [
 
 function Brand() {
   return (
-    <a href="#top" className="brand-lockup" aria-label="Nads2Pay home">
+    <a href="#top" className="brand-lockup" aria-label="Naday home">
       <LogoMark className="landing-logo" />
     </a>
   );
@@ -50,7 +50,7 @@ function StoryCard({ type }: { type: "team" | "fund" | "share" | "claim" | "retu
       <div className="product-panel story-card share-card">
         <span className="signal"><i /><i /><i /></span>
         <h3>Payday #07 is live</h3>
-        <div className="claim-url"><span>nads2pay.xyz/claim/7</span><button type="button"><Copy size={16} /> Copy</button></div>
+        <div className="claim-url"><span>naday.xyz/claim/7</span><button type="button"><Copy size={16} /> Copy</button></div>
         <p>Ready to drop into the team chat.</p>
       </div>
     );
@@ -59,7 +59,7 @@ function StoryCard({ type }: { type: "team" | "fund" | "share" | "claim" | "retu
     return (
       <div className="product-panel story-card claim-card">
         <p>You have a payment</p><div className="demo-amount">1.60 <small>MON</small></div>
-        <div className="sender-row"><span>From<strong>Nads2Pay Payroll #07</strong></span></div>
+        <div className="sender-row"><span>From<strong>Naday Payroll #07</strong></span></div>
         <button type="button" className="demo-button"><Check size={17} /> Payment claimed</button>
       </div>
     );
@@ -94,10 +94,10 @@ export function Landing() {
       <header className="floating-nav">
         <Brand />
         <nav className="nav-links" aria-label="Main navigation">
-          <a href="#how-it-works">How it works</a><a href="#why">Why Nads2Pay</a><a href="#monad">Monad</a>
+          <a href="#how-it-works">How it works</a><a href="#why">Why Naday</a><a href="#monad">Monad</a>
         </nav>
         <button className="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X /> : <Menu />}</button>
-        {menuOpen && <nav className="mobile-menu"><a href="#how-it-works" onClick={() => setMenuOpen(false)}>How it works</a><a href="#why" onClick={() => setMenuOpen(false)}>Why Nads2Pay</a><a href="#monad" onClick={() => setMenuOpen(false)}>Monad</a></nav>}
+        {menuOpen && <nav className="mobile-menu"><a href="#how-it-works" onClick={() => setMenuOpen(false)}>How it works</a><a href="#why" onClick={() => setMenuOpen(false)}>Why Naday</a><a href="#monad" onClick={() => setMenuOpen(false)}>Monad</a></nav>}
       </header>
 
       <main>
@@ -134,15 +134,15 @@ export function Landing() {
 
         <section id="monad" className="monad-chapter">
           <div className="monad-lines" aria-hidden="true"><i /><i /><i /></div>
-          <div><h2>Payroll,<br />at Monad speed.</h2><p>Nads2Pay runs on Monad and settles payouts in native MON.</p><div className="text-links"><a href={`${ACTIVE_NETWORK.explorerUrl}/address/${NADPAY_ADDRESS}`} target="_blank" rel="noreferrer">View contract <ArrowUpRight size={16} /></a><a href="https://www.monad.xyz" target="_blank" rel="noreferrer">Learn about Monad <ArrowUpRight size={16} /></a></div></div>
+          <div><h2>Payroll,<br />at Monad speed.</h2><p>Naday runs on Monad and settles payouts in native MON.</p><div className="text-links"><a href={`${ACTIVE_NETWORK.explorerUrl}/address/${NADPAY_ADDRESS}`} target="_blank" rel="noreferrer">View contract <ArrowUpRight size={16} /></a><a href="https://www.monad.xyz" target="_blank" rel="noreferrer">Learn about Monad <ArrowUpRight size={16} /></a></div></div>
         </section>
 
         <section className="final-cta">
-          <h2>Your team.<br />One payday link.</h2><p>Preset your team and run the next payday on Nads2Pay.</p><button type="button" className="primary-cta" disabled={isPending || noWallet} onClick={connectWallet}>{isPending ? "Connecting…" : "Connect wallet"}<ArrowUpRight size={18} /></button>
+          <h2>Your team.<br />One payday link.</h2><p>Preset your team and run the next payday on Naday.</p><button type="button" className="primary-cta" disabled={isPending || noWallet} onClick={connectWallet}>{isPending ? "Connecting…" : "Connect wallet"}<ArrowUpRight size={18} /></button>
         </section>
       </main>
 
-      <footer className="landing-footer"><nav aria-label="Footer"><a href="#how-it-works">How it works</a><a href={`${ACTIVE_NETWORK.explorerUrl}/address/${NADPAY_ADDRESS}`} target="_blank" rel="noreferrer">Contract</a><a href="https://www.monad.xyz" target="_blank" rel="noreferrer">Monad</a></nav><div className="footer-base"><span>Runs on Monad · payouts settle in native MON</span><span>© {new Date().getFullYear()} Nads2Pay</span></div></footer>
+      <footer className="landing-footer"><nav aria-label="Footer"><a href="#how-it-works">How it works</a><a href={`${ACTIVE_NETWORK.explorerUrl}/address/${NADPAY_ADDRESS}`} target="_blank" rel="noreferrer">Contract</a><a href="https://www.monad.xyz" target="_blank" rel="noreferrer">Monad</a></nav><div className="footer-base"><span>Runs on Monad · payouts settle in native MON</span><span>© {new Date().getFullYear()} Naday</span></div></footer>
     </div>
   );
 }
