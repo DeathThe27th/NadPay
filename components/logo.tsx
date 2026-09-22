@@ -1,7 +1,7 @@
 export function LogoMark({ className = "" }: { className?: string }) {
   return (
-    <span className={`naday-logo ${className}`} aria-hidden="true">
-      <img src="/naday-logo.png" alt="" />
+    <span className={`nads2pay-logo ${className}`} aria-hidden="true">
+      <img src="/nads2pay-logo.png" alt="" />
     </span>
   );
 }

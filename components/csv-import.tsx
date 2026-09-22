@@ -77,7 +77,7 @@ export function CsvImport({ onApply }: { onApply: (rows: CsvRow[]) => void }) {
         in MON), one row per teammate. A header row is fine.{" "}
         <a
           href={SAMPLE_HREF}
-          download="naday-recipients-sample.csv"
+          download="nads2pay-recipients-sample.csv"
           className="font-medium text-primary hover:underline"
         >
           Download sample
