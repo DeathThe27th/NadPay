@@ -19,6 +19,16 @@ import { PayoutHistory, SummaryStrip } from "@/components/history";
 import { RoundStatus } from "@/components/round-status";
 import { usePayerRounds } from "@/lib/rounds";
 import type { CsvRow } from "@/lib/csv";
+import { tightGasLimit } from "@/lib/payroll/gas";
+import {
+  WorkspaceNav,
+  type WorkspaceRole,
+  type WorkspaceView,
+} from "@/components/workspace-nav";
+import {
+  EmployerWorkspacePanel,
+  MemberWorkspacePanel,
+} from "@/components/workspace-panels";
 
 type Row = { address: string; amount: string };
 
@@ -52,6 +62,8 @@ export default function Dashboard() {
   const [error, setError] = useState<string | null>(null);
   const [createdRound, setCreatedRound] = useState<bigint | null>(null);
   const [copied, setCopied] = useState(false);
+  const [role, setRole] = useState<WorkspaceRole>("employer");
+  const [view, setView] = useState<WorkspaceView>("overview");
 
   const history = usePayerRounds(address);
 
@@ -122,20 +134,34 @@ export default function Dashboard() {
     setError(null);
   }
 
+  function changeRole(nextRole: WorkspaceRole) {
+    setRole(nextRole);
+    setView("overview");
+  }
+
   async function saveTeam() {
     if (!allValid || validRows.length === 0) return;
     setBusy("save");
     setError(null);
     try {
+      const args = [
+        validRows.map((row) => row.address as `0x${string}`),
+        validRows.map((row) => parseEther(row.amount)),
+      ] as const;
+      const gas = await publicClient!.estimateContractGas({
+        address: NADPAY_ADDRESS,
+        abi: NADPAY_ABI,
+        functionName: "setRecipients",
+        args,
+        account: address!,
+      });
       const hash = await writeContractAsync({
         address: NADPAY_ADDRESS,
         abi: NADPAY_ABI,
         functionName: "setRecipients",
-        args: [
-          validRows.map((row) => row.address as `0x${string}`),
-          validRows.map((row) => parseEther(row.amount)),
-        ],
+        args,
         chainId: activeChain.id,
+        gas: tightGasLimit(gas),
       });
       await publicClient!.waitForTransactionReceipt({ hash });
       await refetchTemplate();
@@ -158,20 +184,40 @@ export default function Dashboard() {
         value: total,
       } as const;
       const hash = matchesTemplate
-        ? await writeContractAsync({
-            ...common,
-            functionName: "createRound",
-            args: [BigInt(windowSeconds)],
-          })
-        : await writeContractAsync({
-            ...common,
-            functionName: "createRoundCustom",
-            args: [
+        ? await (async () => {
+            const args = [BigInt(windowSeconds)] as const;
+            const gas = await publicClient!.estimateContractGas({
+              ...common,
+              functionName: "createRound",
+              args,
+              account: address!,
+            });
+            return writeContractAsync({
+              ...common,
+              functionName: "createRound",
+              args,
+              gas: tightGasLimit(gas),
+            });
+          })()
+        : await (async () => {
+            const args = [
               validRows.map((row) => row.address as `0x${string}`),
               validRows.map((row) => parseEther(row.amount)),
               BigInt(windowSeconds),
-            ],
-          });
+            ] as const;
+            const gas = await publicClient!.estimateContractGas({
+              ...common,
+              functionName: "createRoundCustom",
+              args,
+              account: address!,
+            });
+            return writeContractAsync({
+              ...common,
+              functionName: "createRoundCustom",
+              args,
+              gas: tightGasLimit(gas),
+            });
+          })();
       const receipt = await publicClient!.waitForTransactionReceipt({ hash });
       const [created] = parseEventLogs({
         abi: NADPAY_ABI,
@@ -258,6 +304,24 @@ export default function Dashboard() {
   return (
     <Shell>
       <div className="dashboard-workspace rise-in">
+        <WorkspaceNav
+          role={role}
+          view={view}
+          onRoleChange={changeRole}
+          onViewChange={setView}
+        />
+
+        {role !== "employer" ? (
+          <MemberWorkspacePanel role={role} view={view} address={address} />
+        ) : view !== "payroll" ? (
+          <EmployerWorkspacePanel
+            view={view}
+            summary={history.summary}
+            onOpenPayroll={() => setView("payroll")}
+            onOpenSettings={() => setView("settings")}
+          />
+        ) : (
+          <>
         <header className="dashboard-intro">
           <div>
             <p>Connected payday workspace</p>
@@ -362,6 +426,8 @@ export default function Dashboard() {
             refetch={history.refetch}
           />
         </section>
+          </>
+        )}
       </div>
     </Shell>
   );

@@ -9,6 +9,7 @@ import { deadlineLabel, formatMon, shortAddress } from "@/lib/format";
 import { ConnectGate, Shell } from "@/components/shell";
 import { SwapQuotePanel, useSwapQuote } from "@/components/swap-panel";
 import { SWAP_CONFIG } from "@/lib/swap";
+import { tightGasLimit } from "@/lib/payroll/gas";
 
 export default function ClaimPage({
   params,
@@ -75,7 +76,8 @@ export default function ClaimPage({
           chainId: activeChain.id,
         } as const;
         await publicClient!.simulateContract({ ...request, account: address });
-        hash = await writeContractAsync(request);
+        const gas = await publicClient!.estimateContractGas({ ...request, account: address! });
+        hash = await writeContractAsync({ ...request, gas: tightGasLimit(gas) });
       } else {
         const request = {
           address: NADPAY_ADDRESS,
@@ -85,7 +87,8 @@ export default function ClaimPage({
           chainId: activeChain.id,
         } as const;
         await publicClient!.simulateContract({ ...request, account: address });
-        hash = await writeContractAsync(request);
+        const gas = await publicClient!.estimateContractGas({ ...request, account: address! });
+        hash = await writeContractAsync({ ...request, gas: tightGasLimit(gas) });
       }
       const receipt = await publicClient!.waitForTransactionReceipt({ hash });
       if (claimingUsdc) {

@@ -1,6 +1,6 @@
-# NadPay — payroll in one link
+# Nads2Pay — payroll in one link
 
-One-click recurring crypto payroll on [Monad](https://monad.xyz) — **live at [nad-pay.vercel.app](https://nad-pay.vercel.app/)**.
+Employer-controlled crypto payroll on [Monad](https://monad.xyz) — **live at [nad-pay.vercel.app](https://nad-pay.vercel.app/)**.
 
 **The problem.** You're a founder paying your Discord mods every week — 10 people, a fixed amount each. Sending 10 separate transactions every week is tedious and easy to fumble.
 
@@ -74,3 +74,20 @@ If price impact exceeds 5% or the quote goes stale, the USDC option is blocked a
 - Foundry, Next.js 16, wagmi v3, viem, Tailwind v4
 
 Built for the BuildAnything "Spark" hackathon.
+
+## Payroll platform foundation
+
+The connected workspace now includes employer, employee and contractor roles;
+overview, people, payroll, requests, reports and settings navigation; and
+explicit provider-configuration states. The existing employer funding flow and
+legacy claim pages remain the settlement path.
+
+The private application schema is in
+[`migrations/001_payroll_platform.sql`](migrations/001_payroll_platform.sql),
+with integer-safe payroll rules and focused authorization/reconciliation tests
+under `lib/payroll/`. The app now includes Supabase Auth route handlers,
+server-authorized company creation and payroll-draft persistence, and signed
+payout-wallet verification. See
+[`docs/payroll-implementation.md`](docs/payroll-implementation.md) and
+[`docs/privacy-decision.md`](docs/privacy-decision.md) for what is implemented
+and what still requires provider access.

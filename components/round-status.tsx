@@ -10,6 +10,7 @@ import {
 import { NADPAY_ABI, NADPAY_ADDRESS } from "@/lib/nadpay";
 import { activeChain } from "@/lib/wagmi";
 import { formatMon, shortAddress } from "@/lib/format";
+import { tightGasLimit } from "@/lib/payroll/gas";
 
 const POLL_MS = 15_000;
 
@@ -28,6 +29,7 @@ export function ReclaimButton({
   onDone?: () => void;
 }) {
   const publicClient = usePublicClient();
+  const { address } = useAccount();
   const { writeContractAsync } = useWriteContract();
   const [armed, setArmed] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -37,12 +39,20 @@ export function ReclaimButton({
     setBusy(true);
     setError(null);
     try {
+      const gas = await publicClient!.estimateContractGas({
+        address: NADPAY_ADDRESS,
+        abi: NADPAY_ABI,
+        functionName: "reclaim",
+        args: [roundId],
+        account: address!,
+      });
       const hash = await writeContractAsync({
         address: NADPAY_ADDRESS,
         abi: NADPAY_ABI,
         functionName: "reclaim",
         args: [roundId],
         chainId: activeChain.id,
+        gas: tightGasLimit(gas),
       });
       await publicClient!.waitForTransactionReceipt({ hash });
       setArmed(false);

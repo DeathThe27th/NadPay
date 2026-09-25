@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=./node_modules/envio/evm.schema.json
+name: NadPay
+field_selection:
+  transaction_fields:
+  - hash
+chains:
+- id: 143
+  # Replace with the verified deployment block before the first cloud sync.
+  # Keeping this explicit avoids scanning Monad history from genesis.
+  start_block: 0
+  contracts:
+  - name: NadPay
+    address:
+    - 0x07324757Fd67FB597987635E1b7f1B767Bcd9494
+    events:
+    - event: Claimed(uint256 indexed roundId, address indexed recipient, uint256 amount)
+    - event: ClaimedAsUsdc(uint256 indexed roundId, address indexed recipient, uint256 amountMon, uint256 usdcOut)
+    - event: RecipientsSaved(address indexed payer, uint256 count, uint256 total)
+    - event: Reclaimed(uint256 indexed roundId, address indexed payer, uint256 amount)
+    - event: RoundCreated(uint256 indexed roundId, address indexed payer, uint256 totalFunded, uint256 deadline)

@@ -10,6 +10,7 @@ import {
 import { activeChain } from "@/lib/wagmi";
 import { shortAddress } from "@/lib/format";
 import { LogoMark } from "@/components/logo";
+import { AuthControl } from "@/components/auth-control";
 
 export function Logo() {
   return (
@@ -81,7 +82,10 @@ export function Shell({ children }: { children: React.ReactNode }) {
       <header className="app-topbar">
         <div className="app-topbar-inner">
           <Logo />
-          <ConnectControl />
+          <div className="topbar-actions">
+            <AuthControl />
+            <ConnectControl />
+          </div>
         </div>
       </header>
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-5 pb-10 pt-6 sm:px-8 sm:pt-8">

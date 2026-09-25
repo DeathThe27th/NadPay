@@ -16,7 +16,8 @@ export type NetworkConfig = {
 
 export const TESTNET: NetworkConfig = {
   chain: monadTestnet,
-  rpcUrl: "https://testnet-rpc.monad.xyz",
+  rpcUrl:
+    process.env.NEXT_PUBLIC_MONAD_RPC_URL ?? "https://testnet-rpc.monad.xyz",
   explorerUrl: "https://testnet.monadscan.com",
   nadpayAddress: "0x42517273BE74153DF1aF39778f3EfdCf5C80f159",
   // No Uniswap deployment on the post-reset testnet (see lib/swap.ts history).
@@ -34,7 +35,7 @@ export const TESTNET: NetworkConfig = {
  */
 export const MAINNET: NetworkConfig = {
   chain: monad,
-  rpcUrl: "https://rpc.monad.xyz",
+  rpcUrl: process.env.NEXT_PUBLIC_MONAD_RPC_URL ?? "https://rpc.monad.xyz",
   explorerUrl: "https://monadscan.com",
   // v2 with atomic claimAndSwap, deployed 2026-07-19 (tx 0x9b0deaad…47a0),
   // verified on Monadscan + MonadVision. v1 (two-tx swap, no constructor)

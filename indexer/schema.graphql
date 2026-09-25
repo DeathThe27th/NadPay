@@ -1,0 +1,46 @@
+type NadPay_Claimed {
+  id: ID!
+  transactionHash: String!
+  blockNumber: BigInt!
+  roundId: BigInt!
+  recipient: String!
+  amount: BigInt!
+}
+
+type NadPay_ClaimedAsUsdc {
+  id: ID!
+  transactionHash: String!
+  blockNumber: BigInt!
+  roundId: BigInt!
+  recipient: String!
+  amountMon: BigInt!
+  usdcOut: BigInt!
+}
+
+type NadPay_RecipientsSaved {
+  id: ID!
+  transactionHash: String!
+  blockNumber: BigInt!
+  payer: String!
+  count: BigInt!
+  total: BigInt!
+}
+
+type NadPay_Reclaimed {
+  id: ID!
+  transactionHash: String!
+  blockNumber: BigInt!
+  roundId: BigInt!
+  payer: String!
+  amount: BigInt!
+}
+
+type NadPay_RoundCreated {
+  id: ID!
+  transactionHash: String!
+  blockNumber: BigInt!
+  roundId: BigInt!
+  payer: String!
+  totalFunded: BigInt!
+  deadline: BigInt!
+}
