@@ -36,12 +36,10 @@ const MEMBER_NAV: Array<{ id: WorkspaceView; label: string; icon: typeof LayoutD
 export function WorkspaceNav({
   role,
   view,
-  onRoleChange,
   onViewChange,
 }: {
   role: WorkspaceRole;
   view: WorkspaceView;
-  onRoleChange: (role: WorkspaceRole) => void;
   onViewChange: (view: WorkspaceView) => void;
 }) {
   const items = role === "employer" ? EMPLOYER_NAV : MEMBER_NAV;
@@ -49,18 +47,10 @@ export function WorkspaceNav({
   return (
     <div className="workspace-nav-wrap">
       <div className="workspace-role-switch" aria-label="Workspace role">
-        <span className="workspace-role-label">Workspace</span>
-        {(["employer", "employee", "contractor"] as const).map((option) => (
-          <button
-            key={option}
-            type="button"
-            aria-pressed={role === option}
-            onClick={() => onRoleChange(option)}
-            className={`workspace-role-button ${role === option ? "is-active" : ""}`}
-          >
-            {option[0].toUpperCase() + option.slice(1)}
-          </button>
-        ))}
+        <span className="workspace-role-label">Your workspace</span>
+        <span className="workspace-role-button is-active" aria-label={`Permanent role: ${role}`}>
+          {role[0].toUpperCase() + role.slice(1)}
+        </span>
       </div>
       <nav className="workspace-nav" aria-label={`${role} navigation`}>
         {items.map(({ id, label, icon: Icon }) => (

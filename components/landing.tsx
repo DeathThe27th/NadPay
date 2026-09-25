@@ -1,9 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Link from "next/link";
 import { motion, useScroll, useTransform } from "motion/react";
 import { ArrowDown, ArrowUpRight, Check, Copy, Menu, X } from "lucide-react";
-import { useConnect } from "wagmi";
 import { VoxelTopographyGrid } from "@/components/ui/voxel-topography-grid";
 import { NADPAY_ADDRESS } from "@/lib/nadpay";
 import { ACTIVE_NETWORK } from "@/lib/network";
@@ -85,13 +85,10 @@ const STORIES = [
 ];
 
 export function Landing() {
-  const { connect, connectors, isPending } = useConnect();
   const [menuOpen, setMenuOpen] = useState(false);
   const storyRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: storyRef, offset: ["start 70%", "end 50%"] });
   const trailLength = useTransform(scrollYProgress, [0, 1], [0, 1]);
-  const noWallet = connectors.length === 0;
-  const connectWallet = () => connectors[0] && connect({ connector: connectors[0] });
 
   return (
     <div id="top" className="landing-world">
@@ -100,6 +97,7 @@ export function Landing() {
         <nav className="nav-links" aria-label="Main navigation">
           <a href="#how-it-works">How it works</a><a href="#why">Why Nads2Pay</a><a href="#monad">Monad</a>
         </nav>
+        <Link href="/sign-in" className="landing-sign-in">Sign in</Link>
         <button className="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X /> : <Menu />}</button>
         {menuOpen && <nav className="mobile-menu"><a href="#how-it-works" onClick={() => setMenuOpen(false)}>How it works</a><a href="#why" onClick={() => setMenuOpen(false)}>Why Nads2Pay</a><a href="#monad" onClick={() => setMenuOpen(false)}>Monad</a></nav>}
       </header>
@@ -112,10 +110,10 @@ export function Landing() {
             <motion.h1 id="hero-title" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .75, ease: [0.16, 1, 0.3, 1] }}>The whole payroll,<br /><span>in one link.</span></motion.h1>
             <motion.p className="hero-body" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .18 }}>Preset your team, fund payday once, and drop one claim link. Everyone pulls their own pay — on Monad.</motion.p>
             <motion.div className="hero-actions" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .3 }}>
-              <button type="button" className="primary-cta" disabled={isPending || noWallet} onClick={connectWallet}>{isPending ? "Connecting…" : "Connect wallet to start"}<ArrowUpRight size={18} /></button>
+              <Link href="/sign-in" className="primary-cta">Sign in to start <ArrowUpRight size={18} /></Link>
               <a className="secondary-cta" href="#how-it-works">See how it works <ArrowDown size={16} /></a>
             </motion.div>
-            {noWallet && <p className="wallet-note">Install an injected wallet such as MetaMask to continue.</p>}
+            <p className="wallet-note">No wallet needed to create your account.</p>
           </div>
         </section>
 
@@ -142,7 +140,7 @@ export function Landing() {
         </section>
 
         <section className="final-cta">
-          <h2>Your team.<br />One payday link.</h2><p>Preset your team and run the next payday on Nads2Pay.</p><button type="button" className="primary-cta" disabled={isPending || noWallet} onClick={connectWallet}>{isPending ? "Connecting…" : "Connect wallet"}<ArrowUpRight size={18} /></button>
+          <h2>Your team.<br />One payday link.</h2><p>Preset your team and run the next payday on Nads2Pay.</p><Link href="/sign-in" className="primary-cta">Sign in to continue <ArrowUpRight size={18} /></Link>
         </section>
       </main>
 

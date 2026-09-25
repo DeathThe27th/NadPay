@@ -14,6 +14,8 @@ import { activeChain } from "@/lib/wagmi";
 import { formatMon, shortAddress } from "@/lib/format";
 import { Shell } from "@/components/shell";
 import { Landing } from "@/components/landing";
+import { OnboardingGate } from "@/components/onboarding";
+import { useAuthUser } from "@/components/auth-control";
 import { CsvImport } from "@/components/csv-import";
 import { PayoutHistory, SummaryStrip } from "@/components/history";
 import { RoundStatus } from "@/components/round-status";
@@ -51,7 +53,8 @@ function rowError(row: Row): string | null {
 }
 
 export default function Dashboard() {
-  const { address, isConnected } = useAccount();
+  const { user: authUser, loading: authLoading } = useAuthUser();
+  const { address } = useAccount();
   const publicClient = usePublicClient();
   const { writeContractAsync } = useWriteContract();
 
@@ -62,7 +65,7 @@ export default function Dashboard() {
   const [error, setError] = useState<string | null>(null);
   const [createdRound, setCreatedRound] = useState<bigint | null>(null);
   const [copied, setCopied] = useState(false);
-  const [role, setRole] = useState<WorkspaceRole>("employer");
+  const [role, setRole] = useState<WorkspaceRole | null>(null);
   const [view, setView] = useState<WorkspaceView>("overview");
 
   const history = usePayerRounds(address);
@@ -132,11 +135,6 @@ export default function Dashboard() {
   function importRows(csvRows: CsvRow[]) {
     setRows(csvRows.map((row) => ({ address: row.address, amount: row.amount })));
     setError(null);
-  }
-
-  function changeRole(nextRole: WorkspaceRole) {
-    setRole(nextRole);
-    setView("overview");
   }
 
   async function saveTeam() {
@@ -244,8 +242,20 @@ export default function Dashboard() {
     setTimeout(() => setCopied(false), 1600);
   }
 
-  if (!isConnected) {
+  if (authLoading) {
+    return <div className="auth-loading">Loading NadPay…</div>;
+  }
+
+  if (!authUser) {
     return <Landing />;
+  }
+
+  if (!role) {
+    return (
+      <Shell>
+        <OnboardingGate onComplete={(nextRole) => { setRole(nextRole); setView("overview"); }} />
+      </Shell>
+    );
   }
 
   if (createdRound !== null) {
@@ -307,7 +317,6 @@ export default function Dashboard() {
         <WorkspaceNav
           role={role}
           view={view}
-          onRoleChange={changeRole}
           onViewChange={setView}
         />
 

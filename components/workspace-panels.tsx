@@ -156,7 +156,7 @@ export function EmployerWorkspacePanel({
           <button type="button" className="text-action" onClick={onOpenPayroll}>Open payroll editor <ArrowUpRight size={15} /></button>
         </div>
         <div className="overview-list">
-          <div><span>Wallet</span><strong>Connected for signing</strong></div>
+          <div><span>Wallet</span><strong>Connect when funding payroll</strong></div>
           <div><span>Claim-ready messages</span><strong>Outbox not configured</strong></div>
           <div><span>Private settlement</span><strong>Research adapter only</strong></div>
         </div>
