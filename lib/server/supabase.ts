@@ -42,7 +42,8 @@ export async function supabaseAdminRequest<T>(
   });
   if (!response.ok) throw new Error(`Database request failed with ${response.status}.`);
   if (response.status === 204) return undefined as T;
-  return (await response.json()) as T;
+  const text = await response.text();
+  return (text.trim() ? JSON.parse(text) : undefined) as T;
 }
 
 /**
@@ -70,7 +71,8 @@ export async function supabaseAuthRequest<T>(
     const body = (await response.json().catch(() => null)) as { msg?: string; error_description?: string } | null;
     throw new Error(body?.msg ?? body?.error_description ?? "Supabase Auth request failed.");
   }
-  return (await response.json()) as T;
+  const text = await response.text();
+  return (text.trim() ? JSON.parse(text) : undefined) as T;
 }
 
 export function isSupabaseConfigured(env: NodeJS.ProcessEnv = process.env): boolean {

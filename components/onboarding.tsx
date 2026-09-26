@@ -16,6 +16,16 @@ type OnboardingState = {
   hasWorkspace: boolean;
 };
 
+async function readJson<T>(response: Response): Promise<T | null> {
+  const text = await response.text();
+  if (!text.trim()) return null;
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    return null;
+  }
+}
+
 const ROLE_OPTIONS: Array<{
   id: WorkspaceRole;
   title: string;
@@ -36,8 +46,8 @@ export function OnboardingGate({ onComplete }: { onComplete: (role: WorkspaceRol
     setLoading(true);
     try {
       const response = await fetch("/api/onboarding", { cache: "no-store" });
-      const body = (await response.json()) as OnboardingState & { error?: string };
-      if (!response.ok) throw new Error(body.error ?? "Onboarding could not load.");
+      const body = await readJson<OnboardingState & { error?: string }>(response);
+      if (!response.ok || !body) throw new Error(body?.error ?? "Onboarding could not load.");
       setState(body);
       if (body.role === "contractor" || (body.role && body.hasWorkspace)) onComplete(body.role);
     } catch (cause) {
@@ -105,8 +115,8 @@ function RoleStep({ onSelected }: { onSelected: (role: WorkspaceRole) => void })
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role }),
       });
-      const body = (await response.json()) as { role?: WorkspaceRole; error?: string };
-      if (!response.ok || !body.role) throw new Error(body.error ?? "Your role could not be saved.");
+      const body = await readJson<{ role?: WorkspaceRole; error?: string }>(response);
+      if (!response.ok || !body?.role) throw new Error(body?.error ?? "Your role could not be saved.");
       onSelected(body.role);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Your role could not be saved.");
@@ -148,8 +158,8 @@ function EmployerStep({ onComplete }: { onComplete: () => void }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, domain }),
       });
-      const body = (await response.json()) as { error?: string };
-      if (!response.ok) throw new Error(body.error ?? "Company could not be created.");
+      const body = await readJson<{ error?: string }>(response);
+      if (!response.ok) throw new Error(body?.error ?? "Company could not be created.");
       onComplete();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Company could not be created.");
@@ -184,8 +194,8 @@ function EmployeeStep({ onRequested }: { onRequested: (request: JoinRequest) => 
       setLoading(true);
       try {
         const response = await fetch(`/api/organizations?search=${encodeURIComponent(search)}`, { cache: "no-store" });
-        const body = (await response.json()) as { organizations?: Array<{ id: string; name: string; domain: string | null }>; error?: string };
-        if (!response.ok) throw new Error(body.error ?? "Companies could not load.");
+        const body = await readJson<{ organizations?: Array<{ id: string; name: string; domain: string | null }>; error?: string }>(response);
+        if (!response.ok || !body) throw new Error(body?.error ?? "Companies could not load.");
         setCompanies(body.organizations ?? []);
       } catch (cause) {
         setError(cause instanceof Error ? cause.message : "Companies could not load.");
@@ -206,8 +216,8 @@ function EmployeeStep({ onRequested }: { onRequested: (request: JoinRequest) => 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ organizationId: selected }),
       });
-      const body = (await response.json()) as { request?: JoinRequest; error?: string };
-      if (!response.ok || !body.request) throw new Error(body.error ?? "Join request could not be created.");
+      const body = await readJson<{ request?: JoinRequest; error?: string }>(response);
+      if (!response.ok || !body?.request) throw new Error(body?.error ?? "Join request could not be created.");
       onRequested(body.request);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Join request could not be created.");

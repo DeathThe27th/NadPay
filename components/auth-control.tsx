@@ -11,6 +11,16 @@ export type AuthUser = {
   appUserId?: string | null;
 };
 
+async function readJson<T>(response: Response): Promise<T | null> {
+  const text = await response.text();
+  if (!text.trim()) return null;
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    return null;
+  }
+}
+
 export function useAuthUser() {
   const { authenticated, ready, user: privyUser, getAccessToken } = usePrivy();
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -21,10 +31,12 @@ export function useAuthUser() {
     try {
       const accessToken = await getAccessToken();
       if (accessToken) {
-        await fetch("/api/auth/privy-session", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ accessToken }) });
+        const sessionResponse = await fetch("/api/auth/privy-session", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ accessToken }) });
+        if (!sessionResponse.ok) throw new Error("Privy session could not be established.");
       }
       const response = await fetch("/api/auth/me", { cache: "no-store" });
-      const body = (await response.json()) as { user?: AuthUser | null };
+      const body = await readJson<{ user?: AuthUser | null }>(response);
+      if (!response.ok || !body) throw new Error("Account details could not be loaded.");
       setUser(authenticated ? { ...body.user, id: privyUser?.id, email: privyUser?.email?.address ?? null, displayName: privyUser?.google?.name ?? privyUser?.email?.address?.split("@")[0] ?? null } : null);
     } catch {
       setUser(null);
