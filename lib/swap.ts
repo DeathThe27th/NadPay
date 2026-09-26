@@ -1,7 +1,7 @@
 /**
  * Claim-as-USDC swap layer (BUILD-2-SWAP.md).
  *
- * The NadPay contract always releases native MON. This layer optionally lets a
+ * The Nads2Pay contract always releases native MON. This layer optionally lets a
  * claimant route the just-claimed MON through Uniswap to USDC in a second,
  * explicitly-confirmed transaction. It is entirely config-gated: when
  * SWAP_CONFIG is null the receive-as toggle never renders and the core claim

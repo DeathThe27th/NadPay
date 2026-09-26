@@ -8,7 +8,7 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 const spaceGrotesk = Space_Grotesk({ variable: "--font-space-grotesk", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "NadPay | money movement for internet teams",
+  title: "Nads2Pay | money movement for internet teams",
   description:
     "Coordinate payroll, payouts, and onchain financial operations from one workspace on Monad.",
 };

@@ -275,7 +275,7 @@ export function MemberWorkspacePanel({ role, view, address }: { role: Exclude<Wo
     try {
       const parsed = new URL(claimLink, window.location.origin);
       if (parsed.origin !== window.location.origin || !/^\/claim\/\d+$/.test(parsed.pathname)) {
-        throw new Error("Use a claim link from this NadPay workspace.");
+        throw new Error("Use a claim link from this Nads2Pay workspace.");
       }
       window.location.assign(`${parsed.pathname}${parsed.search}`);
     } catch (error) {

@@ -116,7 +116,7 @@ function RoleStep({ onSelected }: { onSelected: (role: WorkspaceRole) => void })
   }
 
   return (
-    <OnboardingFrame title="What brings you to NadPay?">
+    <OnboardingFrame title="What brings you to Nads2Pay?">
       <p className="onboarding-lede">Choose the workspace that fits you best. This choice is permanent for this account.</p>
       <div className="role-options">
         {ROLE_OPTIONS.map(({ id, title, description, icon: Icon }) => (

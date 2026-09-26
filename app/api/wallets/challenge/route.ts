@@ -12,7 +12,7 @@ export async function POST(request: Request) {
   const issuedAt = new Date().toISOString();
   const nonce = crypto.randomUUID();
   const message = [
-    "NadPay wallet verification",
+    "Nads2Pay wallet verification",
     `Address: ${address}`,
     `Chain ID: ${activeChain.id}`,
     `Issued at: ${issuedAt}`,

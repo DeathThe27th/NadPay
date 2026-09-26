@@ -243,7 +243,7 @@ export default function Dashboard() {
   }
 
   if (authLoading) {
-    return <div className="auth-loading">Loading NadPay…</div>;
+    return <div className="auth-loading">Loading Nads2Pay…</div>;
   }
 
   if (!authUser) {

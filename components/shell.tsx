@@ -14,7 +14,7 @@ import { AuthControl } from "@/components/auth-control";
 
 export function Logo() {
   return (
-    <Link href="/" aria-label="NadPay home" className="app-brand">
+    <Link href="/" aria-label="Nads2Pay home" className="app-brand">
       <svg className="app-brand-cube" viewBox="0 0 32 32" aria-hidden="true">
         <path d="m16 3 12 7-12 7L4 10 16 3Z" />
         <path d="m4 10 12 7v12L4 22V10Z" />
@@ -63,7 +63,7 @@ function NetworkBanner() {
   return (
     <div className="mx-auto mb-4 flex w-full max-w-2xl flex-wrap items-center justify-between gap-3 rounded-xl border border-danger/40 bg-danger-soft px-4 py-3 text-sm">
       <span>
-        Your wallet is on the wrong network — NadPay runs on {activeChain.name}.
+        Your wallet is on the wrong network — Nads2Pay runs on {activeChain.name}.
       </span>
       <button
         onClick={() => switchChain({ chainId: activeChain.id })}
