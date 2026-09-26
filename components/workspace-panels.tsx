@@ -147,21 +147,21 @@ export function EmployerWorkspacePanel({
 
   return (
     <section className="workspace-panel rise-in">
-      <PanelHeader title="Payroll overview" description="A calm place to see what needs attention before payday." />
+      <PanelHeader title="Good morning" description="Here’s what’s happening across your business today." />
       <div className="overview-grid">
         <div className="overview-feature">
-          <span className="panel-kicker">Next payday</span>
-          <strong>Schedule not set</strong>
-          <p>Choose a frequency and timezone. Funding stays manual and always requires your wallet signature.</p>
-          <button type="button" className="text-action" onClick={onOpenPayroll}>Open payroll editor <ArrowUpRight size={15} /></button>
+          <span className="panel-kicker">Next payroll</span>
+          <strong>Get your first run ready</strong>
+          <p>Add your team, set a pay schedule, and review everything before funds move.</p>
+          <button type="button" className="text-action" onClick={onOpenPayroll}>Start payroll <ArrowUpRight size={15} /></button>
         </div>
         <div className="overview-list">
-          <div><span>Wallet</span><strong>Connect when funding payroll</strong></div>
-          <div><span>Claim-ready messages</span><strong>Outbox not configured</strong></div>
-          <div><span>Private settlement</span><strong>Research adapter only</strong></div>
+          <div><span>Payroll this month</span><strong>{formatMon(summary.totalPaid)} MON</strong></div>
+          <div><span>Team members</span><strong>{summary.roundsCreated ? "Active" : "Add your team"}</strong></div>
+          <div><span>Next step</span><strong>Review your setup</strong></div>
         </div>
       </div>
-      <div className="workspace-section-label">Onchain activity</div>
+      <div className="workspace-section-label">Money overview</div>
       <div className="report-grid">
         <div className="report-stat"><span>Claimed</span><strong>{formatMon(summary.totalPaid)} MON</strong></div>
         <div className="report-stat"><span>Open</span><strong>{formatMon(summary.lockedUnclaimed)} MON</strong></div>

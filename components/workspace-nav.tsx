@@ -20,16 +20,16 @@ export type WorkspaceView =
 
 const EMPLOYER_NAV: Array<{ id: WorkspaceView; label: string; icon: typeof LayoutDashboard }> = [
   { id: "overview", label: "Overview", icon: LayoutDashboard },
-  { id: "people", label: "People", icon: Users },
+  { id: "people", label: "Team", icon: Users },
   { id: "payroll", label: "Payroll", icon: WalletCards },
-  { id: "requests", label: "Requests", icon: ClipboardList },
+  { id: "requests", label: "Activity", icon: ClipboardList },
   { id: "reports", label: "Reports", icon: BarChart3 },
   { id: "settings", label: "Settings", icon: Settings2 },
 ];
 
 const MEMBER_NAV: Array<{ id: WorkspaceView; label: string; icon: typeof LayoutDashboard }> = [
-  { id: "overview", label: "My payments", icon: WalletCards },
-  { id: "requests", label: "Requests", icon: ClipboardList },
+  { id: "overview", label: "Home", icon: LayoutDashboard },
+  { id: "requests", label: "Payments", icon: WalletCards },
   { id: "settings", label: "Profile", icon: Settings2 },
 ];
 
