@@ -1,9 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
-import Link from "next/link";
 import { motion, useScroll, useTransform } from "motion/react";
 import { ArrowDown, ArrowUpRight, Check, Copy, Menu, X } from "lucide-react";
+import { usePrivy } from "@privy-io/react-auth";
 import { VoxelTopographyGrid } from "@/components/ui/voxel-topography-grid";
 import { NADPAY_ADDRESS } from "@/lib/nadpay";
 import { ACTIVE_NETWORK } from "@/lib/network";
@@ -86,9 +86,18 @@ const STORIES = [
 
 export function Landing() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { login, ready, authenticated } = usePrivy();
   const storyRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: storyRef, offset: ["start 70%", "end 50%"] });
   const trailLength = useTransform(scrollYProgress, [0, 1], [0, 1]);
+
+  function startWorkspace() {
+    if (authenticated) {
+      window.location.assign("/");
+      return;
+    }
+    login();
+  }
 
   return (
     <div id="top" className="landing-world">
@@ -97,7 +106,6 @@ export function Landing() {
         <nav className="nav-links" aria-label="Main navigation">
           <a href="#how-it-works">How it works</a><a href="#why">Why Nads2Pay</a><a href="#monad">Monad</a>
         </nav>
-        <Link href="/sign-in" className="landing-sign-in">Sign in</Link>
         <button className="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X /> : <Menu />}</button>
         {menuOpen && <nav className="mobile-menu"><a href="#how-it-works" onClick={() => setMenuOpen(false)}>How it works</a><a href="#why" onClick={() => setMenuOpen(false)}>Why Nads2Pay</a><a href="#monad" onClick={() => setMenuOpen(false)}>Monad</a></nav>}
       </header>
@@ -107,13 +115,19 @@ export function Landing() {
           <VoxelTopographyGrid className="hero-voxel-field" />
           <div className="hero-voxel-shade" aria-hidden="true" />
           <div className="hero-copy">
-            <motion.h1 id="hero-title" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .75, ease: [0.16, 1, 0.3, 1] }}>The operating layer<br /><span>for internet teams.</span></motion.h1>
-            <motion.p className="hero-body" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .18 }}>Coordinate payroll, contributor payouts, and onchain money movement from one calm workspace built for teams that move fast.</motion.p>
+            <motion.p className="hero-eyebrow" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .08 }}>Money operations for modern teams</motion.p>
+            <motion.h1 id="hero-title" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .75, ease: [0.16, 1, 0.3, 1] }}>The calm way to<br /><span>run payroll.</span></motion.h1>
+            <motion.p className="hero-body" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .18 }}>Bring people, payroll, approvals, and the money behind your work into one clear operating workspace.</motion.p>
             <motion.div className="hero-actions" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .3 }}>
-              <Link href="/sign-in" className="primary-cta">Sign in to start <ArrowUpRight size={18} /></Link>
+              <button type="button" className="primary-cta" onClick={startWorkspace} disabled={!ready}>{authenticated ? "Open your workspace" : "Create your workspace"} <ArrowUpRight size={18} /></button>
               <a className="secondary-cta" href="#how-it-works">See how it works <ArrowDown size={16} /></a>
             </motion.div>
-            <p className="wallet-note">No wallet needed to create your account.</p>
+          </div>
+          <div className="hero-ledger" aria-label="Nads2Pay payroll workspace preview">
+            <div className="ledger-topline"><span>Nads2Pay / April</span><span className="ledger-status"><i /> Workspace live</span></div>
+            <div className="ledger-balance"><span>Committed this month</span><strong>$48,240</strong></div>
+            <div className="ledger-rows"><div><span>Payroll run 04</span><strong>$32,800</strong><small>Ready for review</small></div><div><span>Contractors</span><strong>$9,440</strong><small>12 scheduled</small></div><div><span>Operating reserve</span><strong>$6,000</strong><small>Healthy</small></div></div>
+            <div className="ledger-footer"><span>Next payroll run</span><strong>Friday · 09:00 UTC</strong></div>
           </div>
         </section>
 
@@ -140,7 +154,7 @@ export function Landing() {
         </section>
 
         <section className="final-cta">
-          <h2>Make money movement<br />part of the workflow.</h2><p>Bring your team, policies, and next operation into Nads2Pay.</p><Link href="/sign-in" className="primary-cta">Enter the workspace <ArrowUpRight size={18} /></Link>
+          <h2>Make payroll<br />feel organized.</h2><p>Bring your team, policies, and next operation into Nads2Pay.</p><button type="button" className="primary-cta" onClick={startWorkspace} disabled={!ready}>{authenticated ? "Open your workspace" : "Create your workspace"} <ArrowUpRight size={18} /></button>
         </section>
       </main>
 

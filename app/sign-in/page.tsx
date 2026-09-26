@@ -1,21 +1,23 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import { AuthForm } from "@/components/auth-control";
-import { LogoMark } from "@/components/logo";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { usePrivy } from "@privy-io/react-auth";
 
 export default function SignInPage() {
+  const router = useRouter();
+  const { login, ready, authenticated } = usePrivy();
+
+  useEffect(() => {
+    if (authenticated) router.replace("/");
+    else if (ready) login();
+  }, [authenticated, ready, login, router]);
+
   return (
-    <main className="auth-page">
-      <Link href="/" className="auth-back"><ArrowLeft size={16} /> Back to Nads2Pay</Link>
-      <div className="auth-page-inner">
-        <LogoMark className="size-12" />
-        <p className="onboarding-kicker">Nads2Pay workspace</p>
-        <h1>Run the money side of your team.</h1>
-        <p className="auth-page-lede">One workspace for payroll, contributor payouts, and the onchain operations behind them.</p>
-        <AuthForm />
-      </div>
+    <main className="auth-page auth-page-redirect">
+      <p className="onboarding-kicker">Nads2Pay workspace</p>
+      <h1>Opening your secure workspace…</h1>
+      <p className="auth-page-lede">Sign in with Privy to continue to your payroll setup.</p>
     </main>
   );
 }

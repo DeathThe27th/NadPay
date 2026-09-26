@@ -235,7 +235,7 @@ function PendingStep({ companyName }: { companyName: string }) {
     <OnboardingFrame title="Your request is on its way">
       <p className="onboarding-lede">An employer at <strong>{companyName}</strong> needs to approve your membership before private payroll details become available.</p>
       <div className="pending-note"><Check size={18} aria-hidden="true" /><span>Request pending approval</span></div>
-      <p className="onboarding-muted">You can connect a wallet later from Profile. It is not required for this step.</p>
+      <p className="onboarding-muted">We’ll keep your workspace ready while your employer reviews the request.</p>
     </OnboardingFrame>
   );
 }
