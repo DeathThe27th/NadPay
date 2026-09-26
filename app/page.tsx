@@ -333,9 +333,9 @@ export default function Dashboard() {
           <>
         <header className="dashboard-intro">
           <div>
-            <p>Connected payday workspace</p>
-            <h1>Move payroll in one transaction.</h1>
-            <span>Set the team, review the total, then fund the round.</span>
+            <p>Connected operations workspace</p>
+            <h1>Move money with confidence.</h1>
+            <span>Keep your people, payout rules, and next operation in one place.</span>
           </div>
           <div className="dashboard-route" aria-hidden="true"><i /><i /><i /></div>
         </header>

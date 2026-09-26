@@ -160,7 +160,7 @@ function EmployerStep({ onComplete }: { onComplete: () => void }) {
 
   return (
     <OnboardingFrame title="Set up your company">
-      <p className="onboarding-lede">Create the private company workspace where you’ll manage people and fund payroll.</p>
+      <p className="onboarding-lede">Create the private workspace where you’ll manage people, payouts, and the money movement behind your work.</p>
       <form className="onboarding-form" onSubmit={submit}>
         <label className="settings-field"><span>Company name</span><input value={name} onChange={(event) => setName(event.target.value)} placeholder="Acme Inc." required minLength={2} maxLength={120} /></label>
         <label className="settings-field"><span>Company website or email domain <em>optional</em></span><input value={domain} onChange={(event) => setDomain(event.target.value)} placeholder="acme.com" /></label>

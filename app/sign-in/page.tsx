@@ -12,8 +12,8 @@ export default function SignInPage() {
       <div className="auth-page-inner">
         <LogoMark className="size-12" />
         <p className="onboarding-kicker">NadPay workspace</p>
-        <h1>Start with your account.</h1>
-        <p className="auth-page-lede">Sign in first. We’ll help you choose the right workspace before asking for a wallet.</p>
+        <h1>Run the money side of your team.</h1>
+        <p className="auth-page-lede">One workspace for payroll, contributor payouts, and the onchain operations behind them.</p>
         <AuthForm />
       </div>
     </main>

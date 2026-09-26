@@ -17,13 +17,13 @@ const TEAM = [
 
 function Brand() {
   return (
-    <a href="#top" className="brand-lockup" aria-label="Nads2Pay home">
+    <a href="#top" className="brand-lockup" aria-label="NadPay home">
       <svg className="brand-cube" viewBox="0 0 32 32" aria-hidden="true">
         <path d="m16 3 12 7-12 7L4 10 16 3Z" />
         <path d="m4 10 12 7v12L4 22V10Z" />
         <path d="m28 10-12 7v12l12-7V10Z" />
       </svg>
-      <span>Nads2Pay</span>
+      <span>NadPay</span>
     </a>
   );
 }
@@ -63,7 +63,7 @@ function StoryCard({ type }: { type: "team" | "fund" | "share" | "claim" | "retu
     return (
       <div className="product-panel story-card claim-card">
         <p>You have a payment</p><div className="demo-amount">1.60 <small>MON</small></div>
-        <div className="sender-row"><span>From<strong>Nads2Pay Payroll #07</strong></span></div>
+        <div className="sender-row"><span>From<strong>NadPay Operations #07</strong></span></div>
         <button type="button" className="demo-button"><Check size={17} /> Payment claimed</button>
       </div>
     );
@@ -77,9 +77,9 @@ function StoryCard({ type }: { type: "team" | "fund" | "share" | "claim" | "retu
 }
 
 const STORIES = [
-  { id: "team", title: "Set the team once.", body: "Save wallet addresses and payroll amounts ahead of payday. No weekly copy-paste.", type: "team" as const },
-  { id: "fund", title: "Fund payday once.", body: "One transaction funds the whole payroll round in native MON.", type: "fund" as const },
-  { id: "link", title: "One link. Everyone gets paid.", body: "Drop one claim link in your team chat. Each teammate claims directly to their wallet.", type: "share" as const },
+  { id: "team", title: "Build your operating roster.", body: "Keep teammates, contributors, and payout rules ready for the work ahead.", type: "team" as const },
+  { id: "fund", title: "Move money with intent.", body: "Review one clear total and authorize the next operation from your wallet.", type: "fund" as const },
+  { id: "link", title: "Give every payment a path.", body: "Share a clear claim experience while every allocation stays verifiable onchain.", type: "share" as const },
   { id: "claim", title: "Their wallet. Their claim.", body: "Nobody needs your spreadsheet, admin dashboard, or manual transfer. They claim their own allocation.", type: "claim" as const },
   { id: "return", title: "Nothing gets stranded.", body: "When a payroll round closes, unclaimed funds can return to the payer.", type: "return" as const },
 ];
@@ -95,11 +95,11 @@ export function Landing() {
       <header className="floating-nav">
         <Brand />
         <nav className="nav-links" aria-label="Main navigation">
-          <a href="#how-it-works">How it works</a><a href="#why">Why Nads2Pay</a><a href="#monad">Monad</a>
+          <a href="#how-it-works">How it works</a><a href="#why">Why NadPay</a><a href="#monad">Monad</a>
         </nav>
         <Link href="/sign-in" className="landing-sign-in">Sign in</Link>
         <button className="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X /> : <Menu />}</button>
-        {menuOpen && <nav className="mobile-menu"><a href="#how-it-works" onClick={() => setMenuOpen(false)}>How it works</a><a href="#why" onClick={() => setMenuOpen(false)}>Why Nads2Pay</a><a href="#monad" onClick={() => setMenuOpen(false)}>Monad</a></nav>}
+        {menuOpen && <nav className="mobile-menu"><a href="#how-it-works" onClick={() => setMenuOpen(false)}>How it works</a><a href="#why" onClick={() => setMenuOpen(false)}>Why NadPay</a><a href="#monad" onClick={() => setMenuOpen(false)}>Monad</a></nav>}
       </header>
 
       <main>
@@ -107,8 +107,8 @@ export function Landing() {
           <VoxelTopographyGrid className="hero-voxel-field" />
           <div className="hero-voxel-shade" aria-hidden="true" />
           <div className="hero-copy">
-            <motion.h1 id="hero-title" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .75, ease: [0.16, 1, 0.3, 1] }}>The whole payroll,<br /><span>in one link.</span></motion.h1>
-            <motion.p className="hero-body" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .18 }}>Preset your team, fund payday once, and drop one claim link. Everyone pulls their own pay — on Monad.</motion.p>
+            <motion.h1 id="hero-title" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .75, ease: [0.16, 1, 0.3, 1] }}>The operating layer<br /><span>for internet teams.</span></motion.h1>
+            <motion.p className="hero-body" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .18 }}>Coordinate payroll, contributor payouts, and onchain money movement from one calm workspace built for teams that move fast.</motion.p>
             <motion.div className="hero-actions" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .3 }}>
               <Link href="/sign-in" className="primary-cta">Sign in to start <ArrowUpRight size={18} /></Link>
               <a className="secondary-cta" href="#how-it-works">See how it works <ArrowDown size={16} /></a>
@@ -136,15 +136,15 @@ export function Landing() {
 
         <section id="monad" className="monad-chapter">
           <div className="monad-lines" aria-hidden="true"><i /><i /><i /></div>
-          <div><h2>Payroll,<br />at Monad speed.</h2><p>Nads2Pay runs on Monad and settles payouts in native MON.</p><div className="text-links"><a href={`${ACTIVE_NETWORK.explorerUrl}/address/${NADPAY_ADDRESS}`} target="_blank" rel="noreferrer">View contract <ArrowUpRight size={16} /></a><a href="https://www.monad.xyz" target="_blank" rel="noreferrer">Learn about Monad <ArrowUpRight size={16} /></a></div></div>
+          <div><h2>Built for<br />real operations.</h2><p>NadPay brings payroll, payouts, and verifiable settlement together on Monad.</p><div className="text-links"><a href={`${ACTIVE_NETWORK.explorerUrl}/address/${NADPAY_ADDRESS}`} target="_blank" rel="noreferrer">View contract <ArrowUpRight size={16} /></a><a href="https://www.monad.xyz" target="_blank" rel="noreferrer">Learn about Monad <ArrowUpRight size={16} /></a></div></div>
         </section>
 
         <section className="final-cta">
-          <h2>Your team.<br />One payday link.</h2><p>Preset your team and run the next payday on Nads2Pay.</p><Link href="/sign-in" className="primary-cta">Sign in to continue <ArrowUpRight size={18} /></Link>
+          <h2>Make money movement<br />part of the workflow.</h2><p>Bring your team, policies, and next operation into NadPay.</p><Link href="/sign-in" className="primary-cta">Enter the workspace <ArrowUpRight size={18} /></Link>
         </section>
       </main>
 
-      <footer className="landing-footer"><nav aria-label="Footer"><a href="#how-it-works">How it works</a><a href={`${ACTIVE_NETWORK.explorerUrl}/address/${NADPAY_ADDRESS}`} target="_blank" rel="noreferrer">Contract</a><a href="https://www.monad.xyz" target="_blank" rel="noreferrer">Monad</a></nav><div className="footer-base"><span>Runs on Monad · payouts settle in native MON</span><span>© {new Date().getFullYear()} Nads2Pay</span></div></footer>
+      <footer className="landing-footer"><nav aria-label="Footer"><a href="#how-it-works">How it works</a><a href={`${ACTIVE_NETWORK.explorerUrl}/address/${NADPAY_ADDRESS}`} target="_blank" rel="noreferrer">Contract</a><a href="https://www.monad.xyz" target="_blank" rel="noreferrer">Monad</a></nav><div className="footer-base"><span>Runs on Monad · verifiable money movement</span><span>© {new Date().getFullYear()} NadPay</span></div></footer>
     </div>
   );
 }

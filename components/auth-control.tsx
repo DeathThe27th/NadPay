@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePrivy } from "@privy-io/react-auth";
 
 export type AuthUser = {
   id?: string;
@@ -12,15 +12,20 @@ export type AuthUser = {
 };
 
 export function useAuthUser() {
+  const { authenticated, ready, user: privyUser, getAccessToken } = usePrivy();
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   async function refresh() {
     setLoading(true);
     try {
+      const accessToken = await getAccessToken();
+      if (accessToken) {
+        await fetch("/api/auth/privy-session", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ accessToken }) });
+      }
       const response = await fetch("/api/auth/me", { cache: "no-store" });
       const body = (await response.json()) as { user?: AuthUser | null };
-      setUser(body.user ?? null);
+      setUser(authenticated ? { ...body.user, id: privyUser?.id, email: privyUser?.email?.address ?? null, displayName: privyUser?.google?.name ?? privyUser?.email?.address?.split("@")[0] ?? null } : null);
     } catch {
       setUser(null);
     } finally {
@@ -29,74 +34,36 @@ export function useAuthUser() {
   }
 
   useEffect(() => {
+    if (!ready) return;
     void refresh();
     const listener = () => void refresh();
     window.addEventListener("nadpay-auth-changed", listener);
     return () => window.removeEventListener("nadpay-auth-changed", listener);
-  }, []);
+  }, [ready, authenticated, privyUser?.id]);
 
   return { user, loading, refresh };
 }
 
 export function AuthForm() {
-  const router = useRouter();
-  const [mode, setMode] = useState<"sign-in" | "sign-up">("sign-in");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
-
-  async function submit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setBusy(true);
-    setMessage(null);
-    try {
-      const response = await fetch(`/api/auth/${mode === "sign-in" ? "sign-in" : "sign-up"}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, name }),
-      });
-      const body = (await response.json()) as { error?: string; needsEmailConfirmation?: boolean };
-      if (!response.ok) throw new Error(body.error ?? "Authentication failed.");
-      if (body.needsEmailConfirmation) {
-        setMessage("Check your email to confirm the account, then sign in.");
-        setMode("sign-in");
-      } else {
-        window.dispatchEvent(new Event("nadpay-auth-changed"));
-        router.push("/");
-        router.refresh();
-      }
-      setPassword("");
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Authentication failed.");
-    } finally {
-      setBusy(false);
-    }
-  }
+  const { login, ready, authenticated } = usePrivy();
 
   return (
     <div className="auth-page-card">
-      <div className="auth-tabs">
-        <button type="button" className={mode === "sign-in" ? "active" : ""} onClick={() => setMode("sign-in")}>Sign in</button>
-        <button type="button" className={mode === "sign-up" ? "active" : ""} onClick={() => setMode("sign-up")}>Create account</button>
-      </div>
-      <form onSubmit={submit} className="auth-form">
-        {mode === "sign-up" && <input value={name} onChange={(event) => setName(event.target.value)} placeholder="Full name" autoComplete="name" />}
-        <input value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Email" type="email" autoComplete="email" required />
-        <input value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Password" type="password" autoComplete={mode === "sign-in" ? "current-password" : "new-password"} required minLength={8} />
-        <button type="submit" className="workspace-button primary" disabled={busy}>{busy ? "Working…" : mode === "sign-in" ? "Sign in" : "Create account"}</button>
-      </form>
-      {message && <p className="auth-message" role="alert">{message}</p>}
-      <p className="auth-footnote">You’ll choose your NadPay role next. Wallet connection comes later.</p>
+      <p className="auth-card-title">Your identity, your wallet, your workspace.</p>
+      <button type="button" className="workspace-button primary auth-launch" onClick={() => login()} disabled={!ready || authenticated}>
+        {authenticated ? "Signed in" : "Continue with Privy"}
+      </button>
+      <p className="auth-footnote">Use email, Google, or an existing wallet. Privy keeps sign-in and wallet setup in one flow.</p>
     </div>
   );
 }
 
 export function AuthControl() {
   const { user } = useAuthUser();
+  const { logout } = usePrivy();
 
   async function signOut() {
+    await logout();
     await fetch("/api/auth/sign-out", { method: "POST" });
     window.dispatchEvent(new Event("nadpay-auth-changed"));
   }

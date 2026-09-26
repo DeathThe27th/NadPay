@@ -8,9 +8,9 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 const spaceGrotesk = Space_Grotesk({ variable: "--font-space-grotesk", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "NadPay | payroll in one link",
+  title: "NadPay | money movement for internet teams",
   description:
-    "Preset your team, fund payday once, and share one claim link. Everyone pulls their own pay on Monad.",
+    "Coordinate payroll, payouts, and onchain financial operations from one workspace on Monad.",
 };
 
 export default function RootLayout({

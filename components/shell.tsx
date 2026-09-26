@@ -14,7 +14,7 @@ import { AuthControl } from "@/components/auth-control";
 
 export function Logo() {
   return (
-    <Link href="/" aria-label="Nads2Pay home" className="app-brand">
+    <Link href="/" aria-label="NadPay home" className="app-brand">
       <svg className="app-brand-cube" viewBox="0 0 32 32" aria-hidden="true">
         <path d="m16 3 12 7-12 7L4 10 16 3Z" />
         <path d="m4 10 12 7v12L4 22V10Z" />
