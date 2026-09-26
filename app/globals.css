@@ -188,6 +188,12 @@ h3 {
 .auth-card-title{color:#211e2c;font-size:14px;font-weight:700;line-height:1.4}
 .auth-launch{width:100%;min-height:48px;margin-top:16px;font-size:13px}
 
+/* Keep the WebGL topography visible in the light landing direction. */
+.cinematic-hero .hero-voxel-field{z-index:0;opacity:.22;mix-blend-mode:normal;mask-image:linear-gradient(90deg,transparent 0%,#000 34%,#000 100%)}
+.cinematic-hero .hero-voxel-shade{z-index:1;background:linear-gradient(90deg,rgba(250,250,255,.94) 0%,rgba(250,250,255,.7) 52%,rgba(250,250,255,.12) 100%)}
+.cinematic-hero .hero-copy,.cinematic-hero .hero-ledger{z-index:2}
+@media(max-width:760px){.cinematic-hero .hero-voxel-field{opacity:.12;mask-image:linear-gradient(180deg,transparent 0%,#000 42%,#000 100%)}}
+
 /* Nads2Pay operating surface: warm light canvas, ledger preview, and touch-first controls. */
 .cinematic-hero{min-height:760px;align-items:stretch;justify-content:center;padding:150px max(22px,calc((100vw - 1180px)/2)) 92px;background:radial-gradient(circle at 74% 24%,rgba(126,102,241,.14),transparent 28%),linear-gradient(135deg,#fbfbff 0%,#f1efff 100%);color:#211e2c}
 .hero-voxel-field{opacity:.13;mix-blend-mode:multiply}.hero-voxel-shade{background:linear-gradient(90deg,rgba(250,250,255,.96) 0%,rgba(250,250,255,.72) 55%,rgba(250,250,255,.16) 100%)}
